@@ -1,0 +1,166 @@
+#adicionar-etiqueta {
+    display: block;
+    position: fixed;
+    top: 150%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 500px;
+    height: 80%;
+    width: 100%;
+    padding: 25px 30px;
+    font-family: Arial, sans-serif;
+    color: #f0f0f0;
+    background-color: #2f2f2f;
+    border-radius: 10px;
+
+    background-image:
+        linear-gradient(#2f2f2f, #2f2f2f),
+        linear-gradient(to right, #007BFF, #FFFFFF);
+
+    background-origin: padding-box, border-box;
+    background-clip: padding-box, border-box;
+    background-repeat: no-repeat;
+    border: 2px solid transparent;
+
+    display: flex;          
+    flex-direction: column;  
+    gap: 15px;
+}
+
+#adicionar-etiqueta label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+#adicionar-etiqueta input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background-color: #3a3a3a;
+    color: #f0f0f0;
+}
+
+#adicionar-etiqueta input[type="color"] {
+    width: 50px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+#adicionar-etiqueta #botoes-etiqueta {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+#adicionar-etiqueta button {
+    padding: 10px 18px;
+    border-radius: 30px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+}
+
+#adicionar-etiqueta {
+    background-color: #007bff;
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.6);
+}
+
+#btn-adicionar-etiqueta:hover {
+    background-color: #0056b3;
+    box-shadow: 0 5px 20px rgba(0, 86, 179, 0.8);
+}
+
+#btn-cancelar-etiqueta {
+    background-color: #444;
+    color: #f0f0f0;
+    box-shadow: 0 2px 8px rgba(68, 68, 68, 0.4);
+}
+
+#btn-cancelar-etiqueta:hover {
+    background-color: #333;
+    box-shadow: 0 4px 12px rgba(51, 51, 51, 0.6);
+}
+
+#adicionar-etiqueta button:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+#btn-confirmar-etiquetas{
+    background-color: #007bff;
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.6);
+}
+
+.container-etiqueta{
+    max-width: 65%;
+    width: 65%;
+    flex-wrap: wrap;
+    flex-direction: row;
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.etiqueta{
+    font-size: smaller;
+    padding: 4px 8px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+#lista-de-etiquetas {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+#lista-de-etiquetas::-webkit-scrollbar {
+    width: 15px;
+}
+
+#lista-de-etiquetas::-webkit-scrollbar-track {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+
+#lista-de-etiquetas::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.333);
+    border-radius: 10px;
+    border: 3.5px solid transparent;
+    background-clip: content-box;
+}
+
+#lista-de-etiquetas .etiqueta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #3a3a3a;
+    color: #f0f0f0;
+    padding: 4px 8px;
+    border-radius: 20px;
+}
+
+#btn-executarEditar-etiqueta{
+    display: none;
+}
+
+#btn-executarEditar-etiqueta:hover {
+    background-color: #0056b3;
+    box-shadow: 0 5px 20px rgba(0, 86, 179, 0.8);
+}
