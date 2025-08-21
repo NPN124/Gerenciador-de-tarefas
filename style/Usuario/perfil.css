@@ -1,0 +1,219 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #121212;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    min-height: 100vh;
+    padding: 40px 20px;
+    color: #e0e0e0;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+#perfil {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    padding: 30px;
+    max-width: 1800px;
+    width: 100%;
+    background-color: #1e1e1e;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.perfil-container {
+    position: relative;
+    margin-bottom: 40px;
+    height: 250px;
+}
+
+.perfil-info {
+    background-image: url('../../View/img/Dispositivos.png');
+    background-position: center;
+    background-size: cover;
+    border: 1px solid #333;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    height: 200px;
+    width: 100%;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    z-index: 1;
+    padding: 20px;
+    transition: transform 0.3s ease;
+}
+
+.perfil-info:hover {
+    transform: scale(1.01);
+}
+
+.perfil-info h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+#nome-container {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 15px 20px;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 200px;
+    max-width: 400px;
+    transition: background-color 0.3s ease;
+}
+
+#nome-container:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+#nome-container p {
+    font-size: 18px;
+    font-weight: normal;
+    color: #ccc;
+}
+
+#nome-usuario {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4fc3f7;
+}
+
+.foto-perfil {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #444;
+    object-fit: cover;
+    object-position: center;
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 20px;
+    background-image: url('../../View/img/foto_perfil.png');
+    background-position: center;
+    background-size: cover;
+    transition: transform 0.3s ease;
+}
+
+.foto-perfil:hover {
+    transform: scale(1.05);
+}
+
+#menu-graficos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    width: 100%;
+}
+
+.menu {
+    flex: 1 1 300px;
+    border: 1px solid #333;
+    background-color: #222;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.menu h2 {
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.menu ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.menu li {
+    margin-bottom: 10px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: #ddd;
+    padding: 10px 15px;
+    border-radius: 6px;
+    display: block;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.menu a:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.menu h2 i,
+.menu a i,
+.graficos h2 i {
+    margin-right: 8px;
+    color: #4fc3f7;
+    transition: transform 0.3s ease;
+}
+
+.menu a:hover i,
+.graficos h2:hover i {
+    transform: scale(1.2);
+}
+
+.graficos {
+    flex: 2 1 600px;
+    border: 1px solid #333;
+    background-color: #222;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.graficos h2 {
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.grafico,
+.grafico-barras {
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 20px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #aaa;
+    font-style: italic;
+    transition: transform 0.3s ease;
+}
+
+.grafico:hover,
+.grafico-barras:hover {
+    transform: scale(1.01);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
