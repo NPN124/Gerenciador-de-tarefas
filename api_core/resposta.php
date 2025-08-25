@@ -1,7 +1,7 @@
 <?php 
     class Resposta
     {
-        public static function json($status = 200, $mensagem = 'sucesso', $data = null){
+        public static function json($status = 200, $mensagem = 'sucesso', $dados = null){
 
         header('Content-Type: application/json');
         if(!API_IS_ACTIVE) {
@@ -11,7 +11,7 @@
                 'api_version' => API_VERSION,
                 'time_response' => time(),
                 'datatime_response' => date('y-m-d H:i:s'),
-                'data' => null
+                'dados' => null
             ], JSON_PRETTY_PRINT);
         }
             return json_encode([
@@ -20,7 +20,7 @@
                 'api_version' => API_VERSION,
                 'time_response' => time(),
                 'datatime_response' => date('y-m-d H:i:s'),
-                'data' => $data
+                'dados' => $dados
             ], JSON_PRETTY_PRINT);
         }
     }
