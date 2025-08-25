@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['acao'] === 'ADICIONAR') {
     $status = $_POST["status"];
     $descricao = $_POST['descricao'];
     $prazo = $_POST['prazo'];
-    $listaDeEtiquetas = json_decode($_POST["listaDeEtiquetas"] ?? '[]', true);
+    $listaDeEtiquetas = json_decode($_POST["listaDeEtiquetas"] ?? [], true);
 
     $tarefa = new Tarefa(null, $usuarioID, $tituloTarefa, $prazo, $prioridade, $status, $descricao);
 
