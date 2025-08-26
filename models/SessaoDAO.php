@@ -37,4 +37,31 @@ class SessaoDAO
         $statement->bindValue(':token', $sessao->getToken());
         return $statement->execute();
     }
+
+    public static function verificarSessao($token)
+    {
+        try {
+            $pdo = DBConnection::getInstance();
+            $sql = "SELECT isValid FROM sessoes WHERE token = :token";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':token', $token);
+            $stmt->execute(); 
+            $isValid = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $isValid["isValid"];
+        } catch (Exception $e) {
+            throw new Exception("isvalid eerr" . $e);
+        }
+
+    }
+
+    public static function getIdUsuario($token)
+    {
+        $pdo = DBConnection::getInstance();
+        $sql = "SELECT usuario_id FROM sessoes WHERE token = :token";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':token', $token);
+        $stmt->execute();
+        $id_Usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $id_Usuario["usuario_id"];
+    }
 }

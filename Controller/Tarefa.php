@@ -1,67 +1,31 @@
 <?php 
     require_once __DIR__ ."/../models/TarefaDAO.php";
     require_once __DIR__ ."/../models/EtiquetaDAO.php";
-    require_once __DIR__ ."/ClassEtiqueta.php";
+    require_once __DIR__ ."/../models/Objectos/Etiqueta.php";
+    require_once __DIR__ ."/../models/Objectos/Tarefa.php";
+    require_once __DIR__ ."/../api_core/resposta.php";
     require_once __DIR__ ."/../conexao.php";
 
-session_start();
-$usuarioID = $_SESSION['usuario_id'];
+    class TarefaController{
 
-class Tarefa {
-    private $id, $usuarioID, $titulo, $prazo, $prioridade, $status, $descricao, $data_criacao, $data_conclusao;
+        public static function getTarefas($usuarioID){
+            try {
+                
+                $tarefaDAO = new TarefasDAO();
+                $listaDeTarefas = $tarefaDAO->listarTarefas($usuarioID);
 
-    public function __construct($id, $usuarioID, $titulo, $prazo, $prioridade, $status, $descricao, $data_criacao = null, $data_conclusao = null) {
-        $this->id = $id;
-        $this->usuarioID = $usuarioID;
-        $this->titulo = $titulo;
-        $this->prazo = $prazo;
-        $this->descricao = $descricao;
-        $this->prioridade = $prioridade;
-        $this->status = $status ?? "media";
-        $this->data_criacao = $data_criacao ?? date('Y-m-d H:i:s');
-        $this->data_conclusao = $data_conclusao;
-    }
+                if($listaDeTarefas) {
+                    echo Resposta::json(200,'sucesso', $listaDeTarefas);
+                }else{
+                    echo Resposta::json(404, 'tarefa não encontrada');
+                }
 
-    public function getId() { return $this->id; }
-    public function getTitulo() { return $this->titulo; }
-    public function getPrazo() { return $this->prazo; }
-    public function getDescricao() { return $this->descricao; }
-    public function getPrioridade() { return $this->prioridade; }
-    public function getStatus() { return $this->status; }
-    public function getDataCriacao() { return $this->data_criacao; }
-    public function getDataConclusao() { return $this->data_conclusao; }
-    public function getUsuarioID() { return $this->usuarioID; }
-
-    public function setTitulo($titulo) { $this->titulo = $titulo; }
-    public function setDescricao($descricao) { $this->descricao = $descricao; }
-    public function setPrazo($prazo) { $this->prazo = $prazo; }
-    public function setPrioridade($prioridade) { $this->prioridade = $prioridade; }
-    public function setStatus($status) { $this->status = $status; }
-    public function setDataCriacao($data_criacao) { $this->data_criacao = $data_criacao; }
-    public function setDataConclusao($data_conclusao) { $this->data_conclusao = $data_conclusao; }
-    public function setUsuarioID($usuarioID) { $this->usuarioID = $usuarioID; }
-}
-
-    $tarefaDAO = new TarefasDAO();
-    $etiquetaDAO = new EtiquetaDAO();
-
-    if($_SERVER['REQUEST_METHOD'] == 'GET'){
-
-        try {
-            $listaDeTarefas = $tarefaDAO->listarTarefas($usuarioID);
-
-            if ($listaDeTarefas) {
-                echo json_encode($listaDeTarefas);
-            } else {
-                echo json_encode(["resposta" => "erro"]);
+            } catch (Exception $e) {
+                error_log($e->getMessage());
+                echo Resposta::json(500,"erro ao comunicar com o servidor");
             }
-        } catch (PDOException $e) {
-            error_log("Erro ao buscar tarefas: " . $e->getMessage());
-            echo json_encode(["resposta" => "erro", "mensagem" => "Erro ao buscar tarefas"]);
         }
-        exit();
     }
-
     
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['acao'] === 'ADICIONAR') {
     $tituloTarefa = trim($_POST["titulo"]);

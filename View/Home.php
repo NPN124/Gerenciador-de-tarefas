@@ -33,7 +33,7 @@ $perfil = $_SESSION['usuario_tipo'];
                 <ul>
                     <li><a href="Menu.php"><i class="fas fa-chart-line"></i>Tarefas</a></li>
                     <!-- <li><a href="#"><i class="fas fa-user-edit"></i> Editar perfil</a></li> -->
-                    <li><a href="../index.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="../View/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </div>
             <div class="graficos">

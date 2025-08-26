@@ -1,4 +1,5 @@
 <?php 
+require_once __DIR__ ."/configracao.php";
     class Resposta
     {
         public static function json($status = 200, $mensagem = 'sucesso', $dados = null){
