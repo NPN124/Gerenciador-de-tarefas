@@ -1,25 +1,46 @@
-<?php 
-    $recurso = $_GET['recurso'];
-    $method = $_SERVER['REQUEST_METHOD'];
-    $id = $_GET['id'] ?? null;
+<?php
+header("Content-Type: application/json");
+require_once __DIR__ . "/../../api_core/resposta.php";
 
-    
+$recurso = $_GET['recurso'];
+$method = $_SERVER['REQUEST_METHOD'];
+$id = $_GET['id'] ?? null;
 
-    $curl = curl_init();
+//Pegar dados do corpo da requisição, enviado pelo ajax 
+$dadosJSON = file_get_contents("php://input") ?? null;
 
-    if($id != null){
-        curl_setopt($curl, CURLOPT_URL, "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}&id={$id}");
-    }else{
-        curl_setopt($curl, CURLOPT_URL, "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}");
-    }
+//Iniciar cURL
+$curl = curl_init();
+$URL = null;
 
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+if ($id) {
+    $URL = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}&id={$id}";
+} else {
+    $URL = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}";
+}
 
+curl_setopt($curl, CURLOPT_URL, $URL);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-    if($method == "GET"){
+switch ($method) {
+    case "GET":
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
-        $resposta = curl_exec($curl);
-        print_r($resposta);
-        curl_close($curl);
-    }
-?>
+        break;
+    case "POST":
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $dadosJSON);
+        break;
+    case "PUT":
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $dadosJSON);
+        break;
+    case "DELETE":
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+        break;
+    default:
+        echo Resposta::json(405, "Metodo de requisição não existe");
+}
+
+$resposta = curl_exec($curl);
+echo $resposta;
+curl_close($curl);

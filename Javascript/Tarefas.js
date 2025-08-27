@@ -1,4 +1,6 @@
-//Atualizar tarefa
+
+console.log("tua gggggggggg");
+
 $('#formulario-adicionar-titulo-tarefa').submit(adicionarTituloTarefa)
 $('#btn-adicionar').on('click', adicionarTarefa);
 
@@ -42,6 +44,7 @@ $('#btn-formulario-adicionar-etiqueta').on('click', function () {
 });
 
 $(document).ready(function () {
+    console.log("tua mae");
     listarTarefas();
 });
 
@@ -111,7 +114,6 @@ function adicionarTarefa() {
     }
 
     let tarefa_etiquetas = {
-        acao: 'ADICIONAR',
         titulo: titulo,
         prioridade: prioridade,
         prazo: prazo,
@@ -125,13 +127,13 @@ function adicionarTarefa() {
 
     $.ajax({
         type: 'POST',
-        url: "../Controller/Tarefa.php",
-        data: tarefa_etiquetas,
+        url: '../api_core/cURL/cURL.php/?recurso=tarefa',
+        data: JSON.stringify(tarefa_etiquetas),
         dataType: 'json'
     }).done(function (resultado) {
         $('#btn-adicionar').prop('disabled', false);
         console.log(resultado);
-        if (resultado.resposta === "sucesso") {
+        if (resultado.status == 200) {
             listarTarefas();
         } else {
             console.log("Erro ao adicionar tarefa");
@@ -336,12 +338,15 @@ function listarTarefas() {
     $('.container-tarefas').empty();
 
     $.ajax({
-        url: '../Controller/Tarefa.php',
+        url: '../api_core/cURL/cURL.php/?recurso=tarefa',
         method: 'GET',
         dataType: 'json'
     }).done(function (resultado) {
-        const pendentes = resultado.filter(t => t.status === "pendente" || t.status === "em_andamento");
-        const concluidas = resultado.filter(t => t.status === "concluida");
+
+        console.log(resultado);
+        const tarefas = resultado.dados;
+        const pendentes = tarefas.filter(t => t.status === "pendente" || t.status === "em_andamento");
+        const concluidas = tarefas.filter(t => t.status === "concluida");
            
         function renderizar(lista){
             for (let i = 0; i < lista.length; i++) {
@@ -395,6 +400,9 @@ function listarTarefas() {
         }
         renderizar(pendentes);
         renderizar(concluidas);
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.log("errrooooooo");
+        console.log("AJAX erro:", textStatus, errorThrown, jqXHR.responseText);
     });
 }
 

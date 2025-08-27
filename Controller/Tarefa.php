@@ -8,71 +8,74 @@
 
     class TarefaController{
 
-        public static function getTarefas($usuarioID){
-            try {
-                
-                $tarefaDAO = new TarefasDAO();
-                $listaDeTarefas = $tarefaDAO->listarTarefas($usuarioID);
+    public static function getTarefas($usuarioID)
+    {
+        try {
 
-                if($listaDeTarefas) {
-                    echo Resposta::json(200,'sucesso', $listaDeTarefas);
-                }else{
-                    echo Resposta::json(404, 'tarefa não encontrada');
-                }
+            $tarefaDAO = new TarefasDAO();
+            $listaDeTarefas = $tarefaDAO->listarTarefas($usuarioID);
 
-            } catch (Exception $e) {
-                error_log($e->getMessage());
-                echo Resposta::json(500,"erro ao comunicar com o servidor");
+            if ($listaDeTarefas) {
+                echo Resposta::json(200, 'sucesso', $listaDeTarefas);
+            } else {
+                echo Resposta::json(404, 'tarefa não encontrada');
             }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            echo Resposta::json(500, "erro ao comunicar com o servidor");
         }
     }
-    
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['acao'] === 'ADICIONAR') {
-    $tituloTarefa = trim($_POST["titulo"]);
-    $prioridade = $_POST["prioridade"];
-    $status = $_POST["status"];
-    $descricao = $_POST['descricao'];
-    $prazo = $_POST['prazo'];
-    $listaDeEtiquetas = json_decode($_POST["listaDeEtiquetas"] ?? [], true);
 
-    $tarefa = new Tarefa(null, $usuarioID, $tituloTarefa, $prazo, $prioridade, $status, $descricao);
+    public static function adicionarTarefa($dados, $usuarioID)
+    {
+        $tituloTarefa = $dados['titulo'];
+        $prioridade = $dados["prioridade"];
+        $status = $dados["status"];
+        $descricao = $dados['descricao'];
+        $prazo = $dados['prazo'];
+        $listaDeEtiquetas = $dados["listaDeEtiquetas"] ?? [];
 
-    try {
-        $idTarefa = $tarefaDAO->adicionarTarefa($tarefa);
+        try {
+            $etiquetaDAO = new EtiquetaDAO();
+            $tarefaDAO = new TarefasDAO();
+            $tarefa = new Tarefa(null, $usuarioID, $tituloTarefa, $prazo, $prioridade, $status, $descricao);
 
-        if (!$idTarefa) {
-            echo json_encode(["resposta" => "erro", "mensagem" => "Erro ao adicionar tarefa."]);
-            exit();
-        }
+            $idTarefa = $tarefaDAO->adicionarTarefa($tarefa);
+            if (!$idTarefa) {
+                echo Resposta::json(401, "Erro ao adicionar tarefa");
+                exit();
+            }
 
-        if (is_array($listaDeEtiquetas) && count($listaDeEtiquetas) > 0) {
+            if (is_array($listaDeEtiquetas) && count($listaDeEtiquetas) > 0) {
 
-            foreach ($listaDeEtiquetas as $etiquetaDados) {
-                $nomeEtiqueta = trim($etiquetaDados['nome']);
-                $corEtiqueta = trim($etiquetaDados['cor']);
-                $idEtiqueta = $etiquetaDAO->buscarEtiquetaPorNomeCorUsuario($nomeEtiqueta, $corEtiqueta, $usuarioID);
-
-                if (!$idEtiqueta) {
-                    $etiqueta = new Etiqueta(null ,$nomeEtiqueta, $corEtiqueta, $usuarioID);
-                    $idEtiqueta = $etiquetaDAO->adicionarEtiqueta($etiqueta);
+                foreach ($listaDeEtiquetas as $etiquetaDados) {
+                    $nomeEtiqueta = trim($etiquetaDados['nome']);
+                    $corEtiqueta = trim($etiquetaDados['cor']);
+                    $idEtiqueta = $etiquetaDAO->buscarEtiquetaPorNomeCorUsuario($nomeEtiqueta, $corEtiqueta, $usuarioID);
 
                     if (!$idEtiqueta) {
-                        echo json_encode(["resposta" => "erro", "mensagem" => "Falha ao adicionar etiqueta '$nomeEtiqueta'."]);
-                        exit();
+                        $etiqueta = new Etiqueta(null, $nomeEtiqueta, $corEtiqueta, $usuarioID);
+                        $idEtiqueta = $etiquetaDAO->adicionarEtiqueta($etiqueta);
+
+                        if (!$idEtiqueta) {
+                            echo Resposta::json(401, "Erro ao adicionar etiqueta");
+                            exit();
+                        }
                     }
+                    $etiquetaDAO->associarEtiquetaTarefa($idTarefa, $idEtiqueta);
                 }
-                $etiquetaDAO->associarEtiquetaTarefa($idTarefa, $idEtiqueta);
             }
+
+            echo Resposta::json(200);
+            exit;
+        } catch (Exception $e) {
+            error_log("Erro ao adicionar tarefa: " .$e->getMessage());
+            echo Resposta::json(500, "Erro ao adicionar tarefa");
+            exit();
         }
-
-        echo json_encode(["resposta" => "sucesso"]);
-        exit();
-
-    } catch (Exception $e) {
-        echo json_encode(["resposta" => "erro", "mensagem" => "Erro ao adicionar tarefa e etiquetas: " . $e->getMessage()]);
-        exit();
     }
 }
+
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['acao'] == 'APAGAR') {
 

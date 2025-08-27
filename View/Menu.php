@@ -159,7 +159,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </dialog>
 
         <script type="text/javascript" src="../Javascript/Jquery/jquery-3.7.1.js"></script>
-        <script type="text/javascript" src="../Javascript/Validate/validat.js"></script>
+        <script type="text/javascript" src="../Javascript/Validate/jquery.validate.min.js"></script>
+        <script type="text/javascript" src="../Javascript/Validate/messages_pt_PT.js"></script>
         <script type="text/javascript" src="../Javascript/Tarefas.js"></script>
         <script type="text/javascript" src="../Javascript/Efeitos.js"></script>
         <script type="text/javascript" src="../Javascript/Etiqueta.js"></script>

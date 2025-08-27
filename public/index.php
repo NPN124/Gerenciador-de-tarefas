@@ -6,7 +6,7 @@ require_once __DIR__ ."/../models/SessaoDAO.php";
 
 header("Content-Type: application/json");
 
-function alertRedirect($mensagem, $url = '../index.php') {
+function alertRedirect($mensagem, $url = '../../index.php') {
     echo "<script>
         alert('{$mensagem}');
         window.location.href = '{$url}';
@@ -14,7 +14,7 @@ function alertRedirect($mensagem, $url = '../index.php') {
     exit; 
 }
 
-$token = $_COOKIE['tpwSSID'] ?? null;
+$token = "token_68aede1f8dab74.92247956";
 
 try {
     if (!$token) {
@@ -28,7 +28,7 @@ try {
 
     $id_Usuario = SessaoDAO::getIdUsuario($token);
 
-} catch (\Throwable $e) {
+} catch (Exception $e) {
     alertRedirect('Sessao expirada');
     exit;
 }
@@ -36,6 +36,7 @@ try {
     $rescurso = $_GET['recurso'];
     $id = $GET['id'] ?? null;
     $method = $_SERVER['REQUEST_METHOD'];
+    $dados = json_decode(file_get_contents('php://input'), true) ?? null;
 
     if($rescurso == "tarefa"){
 
@@ -43,6 +44,10 @@ try {
 
             case "GET":
                 TarefaController::getTarefas($id_Usuario);
+                break;
+            case "POST":
+                TarefaController::adicionarTarefa($dados, $id_Usuario);
+                break;
         }
     }
 ?>
