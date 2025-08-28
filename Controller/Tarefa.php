@@ -1,17 +1,16 @@
 <?php 
-    require_once __DIR__ ."/../models/TarefaDAO.php";
-    require_once __DIR__ ."/../models/EtiquetaDAO.php";
-    require_once __DIR__ ."/../models/Objectos/Etiqueta.php";
-    require_once __DIR__ ."/../models/Objectos/Tarefa.php";
-    require_once __DIR__ ."/../api_core/resposta.php";
-    require_once __DIR__ ."/../conexao.php";
+require_once __DIR__ ."/../models/TarefaDAO.php";
+require_once __DIR__ ."/../models/EtiquetaDAO.php";
+require_once __DIR__ ."/../models/Objectos/Etiqueta.php";
+require_once __DIR__ ."/../models/Objectos/Tarefa.php";
+require_once __DIR__ ."/../api_core/resposta.php";
+require_once __DIR__ ."/../conexao.php";
 
-    class TarefaController{
+class TarefaController {
 
     public static function getTarefas($usuarioID)
     {
         try {
-
             $tarefaDAO = new TarefasDAO();
             $listaDeTarefas = $tarefaDAO->listarTarefas($usuarioID);
 
@@ -28,16 +27,16 @@
 
     public static function adicionarTarefa($dados, $usuarioID)
     {
-        $tituloTarefa = $dados['titulo'];
-        $prioridade = $dados["prioridade"];
-        $status = $dados["status"];
-        $descricao = $dados['descricao'];
-        $prazo = $dados['prazo'];
+        $tituloTarefa = $dados['titulo'] ?? null;
+        $prioridade   = $dados["prioridade"] ?? null;
+        $status       = $dados["status"] ?? null;
+        $descricao    = $dados['descricao'] ?? null;
+        $prazo        = $dados['prazo'] ?? null;
         $listaDeEtiquetas = $dados["listaDeEtiquetas"] ?? [];
 
         try {
             $etiquetaDAO = new EtiquetaDAO();
-            $tarefaDAO = new TarefasDAO();
+            $tarefaDAO   = new TarefasDAO();
             $tarefa = new Tarefa(null, $usuarioID, $tituloTarefa, $prazo, $prioridade, $status, $descricao);
 
             $idTarefa = $tarefaDAO->adicionarTarefa($tarefa);
@@ -47,12 +46,11 @@
             }
 
             if (is_array($listaDeEtiquetas) && count($listaDeEtiquetas) > 0) {
-
                 foreach ($listaDeEtiquetas as $etiquetaDados) {
                     $nomeEtiqueta = trim($etiquetaDados['nome']);
-                    $corEtiqueta = trim($etiquetaDados['cor']);
-                    $idEtiqueta = $etiquetaDAO->buscarEtiquetaPorNomeCorUsuario($nomeEtiqueta, $corEtiqueta, $usuarioID);
+                    $corEtiqueta  = trim($etiquetaDados['cor']);
 
+                    $idEtiqueta = $etiquetaDAO->buscarEtiquetaPorNomeCorUsuario($nomeEtiqueta, $corEtiqueta, $usuarioID);
                     if (!$idEtiqueta) {
                         $etiqueta = new Etiqueta(null, $nomeEtiqueta, $corEtiqueta, $usuarioID);
                         $idEtiqueta = $etiquetaDAO->adicionarEtiqueta($etiqueta);
@@ -66,7 +64,7 @@
                 }
             }
 
-            echo Resposta::json(200);
+            echo Resposta::json(200, "Tarefa adicionada com sucesso", ["id" => $idTarefa]);
             exit;
         } catch (Exception $e) {
             error_log("Erro ao adicionar tarefa: " .$e->getMessage());
@@ -74,93 +72,109 @@
             exit();
         }
     }
-}
 
+    public static function removerTarefa($idTarefa)
+    {
+        try {
+            $tarefaDAO = new TarefasDAO();
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['acao'] == 'APAGAR') {
+            if ($tarefaDAO->removerTarefa($idTarefa)) {
+                echo Resposta::json(200, "Tarefa removida com sucesso");
+            } else {
+                echo Resposta::json(500, "Erro ao remover tarefa");
+            }
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+            echo Resposta::json(500, "Erro ao remover tarefa: {$e->getMessage()}");
+        }
+
+        exit();
+    }
+
+    public static function pesquisarTarefas($pesquisa)
+    {
+        try {
+            $tarefaDAO = new TarefasDAO();
+            $tarefas   = $tarefaDAO->pesquisarTarefas($pesquisa);
+
+            if ($tarefas && count($tarefas) > 0) {
+                echo Resposta::json(200, "sucesso", $tarefas);
+            } else {
+                echo Resposta::json(404, "Nenhuma tarefa encontrada");
+            }
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+            echo Resposta::json(500, "Erro ao pesquisar tarefas: {$e->getMessage()}");
+        }
+
+        exit();
+    }
+
+    public static function atualizarTarefa($dados, $usuarioID)
+    {
+        $id         = $dados['id'] ?? null;
+        $titulo = trim($dados['titulo']);
+        $descricao  = $dados['descricao'] ?? null;
+        $prazo      = $dados['prazo'] ?? null;
+        $prioridade = $dados['prioridade'] ?? null;
+        $status     = $dados['status'] ?? null;
+
+        if (!$id || !$titulo || !$prazo || !$prioridade || !$status) {
+            echo Resposta::json(400, "Campos obrigatórios não informados");
+            exit();
+        }
+
+        $tarefa = new Tarefa($id, $usuarioID, $titulo, $prazo, $prioridade, $status, $descricao);
 
         try {
-            $idDaTarefa = $_POST['id'];
+            $tarefaDAO = new TarefasDAO();
 
-            if ($tarefaDAO->removerTarefa($idDaTarefa)) {
-                echo json_encode(["resposta" => "sucesso"]);
+            if ($tarefaDAO->atualizarTarefa($tarefa)) {
+                echo Resposta::json(200, "Tarefa atualizada com sucesso");
             } else {
-                echo json_encode(["resposta" => "Erro ao remover tarefa"]);
+                echo Resposta::json(500, "Falha ao atualizar a tarefa");
             }
-        } catch (\Throwable $e) {
-            echo json_encode(["resposta" => "ERRO ao remover tarefa: {$e->getMessage()}"]);
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+            echo Resposta::json(500, "Erro inesperado ao atualizar tarefa: {$e->getMessage()}");
+        }
+
+        exit();
+    }
+
+    public static function buscarTarefaPorId($id)
+    {
+        try {
+            $tarefaDAO = new TarefasDAO();
+            $tarefa = $tarefaDAO->buscarTarefaPorId($id);
+
+            if ($tarefa) {
+                echo Resposta::json(200, "sucesso", $tarefa);
+            } else {
+                echo Resposta::json(404, "Tarefa não encontrada");
+            }
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+            echo Resposta::json(500, "Erro ao buscar tarefa: {$e->getMessage()}");
         }
         exit();
     }
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['acao'] == 'PESQUISAR') {
-
+    public static function concluirTarefa($id)
+    {
         try {
-            $pesquisa = $_POST['pesquisa'];
-            $tarefas = $tarefaDAO->pesquisarTarefas($pesquisa);
+            $tarefaDAO = new TarefasDAO();
 
-            if ($tarefas) {
-                echo json_encode(["resposta" => "sucesso", "tarefas" => $tarefas]);
+            if ($tarefaDAO->concluirTarefa($id)) {
+                echo Resposta::json(200, "Tarefa concluída com sucesso");
             } else {
-                echo json_encode(["resposta" => "erro", "mensagem" => "Nenhuma tarefa encontrada"]);
+                echo Resposta::json(500, "Erro ao concluir a tarefa");
             }
-        } catch (\Throwable $e) {
-            echo json_encode(["resposta" => "erro", "mensagem" => "Erro ao pesquisar tarefas: " . $e->getMessage()]);
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+            echo Resposta::json(500, "Erro ao concluir a tarefa: {$e->getMessage()}");
         }
+        exit();
     }
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['acao'] == 'ACTUALIZAR') {
-    $id = $_POST['id'];
-    $titulo = trim($_POST['titulo']);
-    $descricao = $_POST['descricao'];
-    $prazo = $_POST['prazo'];
-    $prioridade = $_POST['prioridade'];
-    $status = $_POST['status'];
-
-    $tarefa = new Tarefa($id, $usuarioID, $titulo, $prazo, $prioridade, $status, $descricao);
-
-    try {
-        if($tarefaDAO->atualizarTarefa($tarefa)){
-            echo json_encode(["resposta" => "sucesso"]);
-        } else {
-            echo json_encode(["resposta" => "erro", "mensagem" => "Falha ao atualizar a tarefa"]);
-        }
-    } catch (Exception $e) {
-        echo json_encode([
-            "resposta" => "erro",
-            "mensagem" => "Erro inesperado ao atualizar tarefa: " . $e->getMessage()
-        ]);
-    }
-    exit;
 }
-    
-    if($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['acao'] == 'BUSCAR') {
-        $id = $_POST['id'];
-
-        try {
-            $tarefa = $tarefaDAO->buscarTarefaPorId($id);
-
-            if ($tarefa) {
-                echo json_encode(["resposta" => "sucesso", "tarefa" => $tarefa]);
-            } else {
-                echo json_encode(["resposta" => "erro", "mensagem" => "Tarefa não encontrada"]);
-            }
-        } catch (Exception $e) {
-            echo json_encode(["resposta" => "erro", "mensagem" => "Erro ao buscar tarefa: " . $e->getMessage()]);
-        }
-    }
-
-    if($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['acao'] == 'CONCLUIR') {
-        $id = $_POST['id'];
-
-        try {
-            if($tarefaDAO->concluirTarefa($id)){
-                echo json_encode(["resposta" => "sucesso"]);
-            }else{
-                echo json_encode(["resposta" => "erro", "mensagem" =>  "erro ao concluir a tarefa"]);
-            }
-        } catch (\Throwable $e) {
-            echo json_encode(["resposta" => "erro", "mensagem" => "Erro ao concluir a tarefa: " . $e->getMessage()]);
-        }
-    }
 ?>

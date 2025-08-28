@@ -14,9 +14,9 @@ $curl = curl_init();
 $URL = null;
 
 if ($id) {
-    $URL = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}&id={$id}";
+    $URL = "http://localhost/TPW3DPWEBPLS/aceder.xml/Projecto%20PI%20-%20Gerenciador%20de%20tarefas/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}&id={$id}";
 } else {
-    $URL = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}";
+    $URL = "http://localhost/TPW3DPWEBPLS/aceder.xml/Projecto%20PI%20-%20Gerenciador%20de%20tarefas/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}";
 }
 
 curl_setopt($curl, CURLOPT_URL, $URL);

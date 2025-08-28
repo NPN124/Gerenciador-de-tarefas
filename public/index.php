@@ -14,7 +14,7 @@ function alertRedirect($mensagem, $url = '../../index.php') {
     exit; 
 }
 
-$token = "token_68aede1f8dab74.92247956";
+$token = "token_68af47707b0c04.29683538";
 
 try {
     if (!$token) {
@@ -33,21 +33,36 @@ try {
     exit;
 }
 
-    $rescurso = $_GET['recurso'];
-    $id = $GET['id'] ?? null;
-    $method = $_SERVER['REQUEST_METHOD'];
-    $dados = json_decode(file_get_contents('php://input'), true) ?? null;
+$recurso = $_GET['recurso'] ?? null;
+$id      = $_GET['id'] ?? null;
+$method  = $_SERVER['REQUEST_METHOD'];
+$dados   = json_decode(file_get_contents('php://input'), true) ?? null;
 
-    if($rescurso == "tarefa"){
+if ($recurso === "tarefa") {
+    switch ($method) {
+        case "GET":
+            TarefaController::getTarefas($id_Usuario);
+            break;
 
-        switch($method){
+        case "POST":
+            TarefaController::adicionarTarefa($dados, $id_Usuario);
+            break;
 
-            case "GET":
-                TarefaController::getTarefas($id_Usuario);
-                break;
-            case "POST":
-                TarefaController::adicionarTarefa($dados, $id_Usuario);
-                break;
-        }
+        case "PUT":
+            TarefaController::atualizarTarefa($dados, $id_Usuario);
+            break;
+
+        case "DELETE":
+            if ($id) {
+                TarefaController::removerTarefa($idTarefa, $id_Usuario);
+            } else {
+                echo Resposta::json(400, "ID não informado para exclusão");
+            }
+            break;
+
+        default:
+            echo Resposta::json(405, "Método não permitido");
+            break;
     }
+}
 ?>
