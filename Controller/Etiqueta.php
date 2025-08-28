@@ -4,11 +4,39 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . "/../conexao.php";
 require_once __DIR__ . "/../models/EtiquetaDAO.php";
 require_once __DIR__ ."/../models/Objectos/Etiqueta.php";
+require_once __DIR__ ."/../api_core/resposta.php";
 
-session_start();
-$usuarioID = $_SESSION['usuario_id'];
+Class EtiquetasController{
 
+    public static function getEtiquetas($usuarioID){
+        $etiquetaDAO = new EtiquetaDAO();
+        try {
+            $etiquetas = $etiquetaDAO->listaDeEstiquetas($usuarioID);
+            echo Resposta::json(200, 'sucesso', $etiquetas);
+        } catch (Exception $e) {
+            error_log("Erro ao listar tarefas: ". $e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
+            echo Resposta::json(500, "Erro ao carregar etiquetas");
+        }
+    }
 
+    public static function buscarEtiquetaPorId($tarefaID){
+
+        $etiquetaDAO = new EtiquetaDAO();
+        try {
+            $listaDeEtiquetas = $etiquetaDAO->listaDeEtiquetasDeUmaTarefa($tarefaID);
+            if ($listaDeEtiquetas) {
+                echo Resposta::json(200, 'sucesso', $listaDeEtiquetas);
+            } else {
+                echo Resposta::json(405, "Erro ao buscar etiquetas");
+            }
+        } catch (Exception $e) {
+            error_log("Erro ao buscar etiquetas de uma tarefa: " . $e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
+            echo Resposta::json(500, "Erro no servidor ao listar etiquetas");
+        }
+    }
+}
+
+/*
 $etiquetaDAO = new EtiquetaDAO();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['acao'] === 'ADICIONAR') {
@@ -27,28 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['acao'] === 'ADICIONAR') {
 
     } catch (Exception $e) {
         echo json_encode(["resposta" => "erro", "mensagem" => $e->getMessage()]);
-    }
-}
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    try {
-        $etiquetas = $etiquetaDAO->listaDeEstiquetas($usuarioID);
-        echo json_encode(["resposta" => "sucesso", "etiquetas" => $etiquetas]);
-    } catch (Exception $e) {
-        echo json_encode(["resposta" => "erro"]);
-    }
-}
-
-if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['acao'] === 'BUSCAR'){
-    $tarefaID = $_POST['tarefaID'];
-
-    $listaDeEtiquetasDaTarefa = $etiquetaDAO->listaDeEtiquetasDeUmaTarefa($tarefaID);
-
-    if($listaDeEtiquetasDaTarefa){
-        echo json_encode(["resposta" => "sucesso", "etiquetas" => $listaDeEtiquetasDaTarefa]);
-    }else{
-        echo json_encode(["resposta" => "erro"]);
     }
 }
 
@@ -72,5 +78,5 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['acao'] === 'ACTUALIZAR'){
     }
     echo json_encode(["resposta" => "sucesso"]);
 }
-
+*/
 ?>

@@ -22,15 +22,6 @@ class UsuarioMetodos {
                 );
                 setcookie("tpwSSID", $sessao->getToken(), time() + (86400 * 30), "/");
                 SessaoDAO::registarSessao($sessao);
-
-                session_start();
-                $_SESSION['usuario_id'] = $usuario->getId();
-                $_SESSION['usuario_nome'] = $usuario->getNome();
-                $_SESSION['usuario_email'] = $usuario->getEmail();
-                $_SESSION['usuario_tipo'] = $usuario->getTipoUsuario();
-                $_SESSION['usuario_status'] = $usuario->getStatus();
-                $_SESSION['sessao_token'] = $sessao->getToken();
-                $_SESSION['sessao_id'] = $sessao->getId();
                 return true;
             }
         }

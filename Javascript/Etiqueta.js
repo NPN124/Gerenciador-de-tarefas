@@ -12,36 +12,6 @@ $('#btn-confirmar-etiquetas').on('click', function () {
 let etiquetas = [];
 let indexEdicao = null;
 
-function adicionarEtiqueta() {
-    const listaDeEtiquetas = etiquetas;
-
-    if (listaDeEtiquetas.length === 0) {
-        alert("Por favor, preencha todos os campos.");
-        return;
-    }
-
-    $.ajax({
-        url: "../Controller/Etiqueta.php",
-        type: "POST",
-        data: {
-            acao: "ADICIONAR",
-            listaDeEtiquetas: JSON.stringify(listaDeEtiquetas)
-        },
-        dataType: "json"
-    })
-    .done(function (resultado) {
-        if (resultado.resposta == "sucesso") {
-            console.log("Etiqueta adicionada com sucesso: " + resultado.mensagem);
-        } else {
-            console.log("Erro ao adicionar etiqueta: " + resultado.mensagem);
-        }
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-        console.error("Erro na requisição AJAX:", textStatus, errorThrown, jqXHR);
-        alert("Erro ao enviar etiquetas. Tente novamente.");
-    });
-}
-
 function cancelarAdicionarEtiqueta() {
     etiquetas = [];
     $("#nomeDaEtiqueta").val("");
@@ -50,45 +20,14 @@ function cancelarAdicionarEtiqueta() {
     mostrarDIV_2($('#adicionar-etiqueta'), false);
     $('#btn-formulario-adicionar-etiqueta').text("Adicionar Etiqueta");
 };
-
-function actualizarEtiquetas(){
-    const listaDeEtiquetas = etiquetas;
-
-    console.log(listaDeEtiquetas);
-
-    if(listaDeEtiquetas.length <= 0){
-        return;
-    }
-
-    $.ajax({
-        url: '../Controller/Etiqueta.php',
-        method: 'POST',
-        data: {
-            acao: 'ACTUALIZAR',
-            listaDeEtiquetas: JSON.stringify(listaDeEtiquetas)
-        },
-        dataType: 'json'
-    }).done(function(resultado){
-        if(resultado.resposta == "sucesso"){
-            console.log("Tarefas actualizadas com sucesso");
-        }else{
-            console.log(resultado.mensagem);
-        }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        console.log("AJAX erro:", textStatus, errorThrown, jqXHR.responseText);
-    });
-
-    etiquetas = [];
-}
-
 function listarEtiquetasNaTarefa($tarefaID, conteiner) {
     $.ajax({
-        url: '../Controller/Etiqueta.php',
+        url: '../api_core/cURL/cURL.php/?recurso=etiqueta',
         method: 'GET',
         dataType: 'json'
     }).done(function (resultado) {
-        if (resultado.resposta === "sucesso") {
-            const etiquetas = resultado.etiquetas;
+        if (resultado.status == 200) {
+            const etiquetas = resultado.dados;
             for (let i = 0; i < etiquetas.length; i++) {
                 const etiqueta = etiquetas[i];
                 if(etiqueta.tarefa_id == $tarefaID){
@@ -110,21 +49,16 @@ function listarEtiquetasNaTarefa($tarefaID, conteiner) {
 
 function buscarEtiquetas(tarefaID) {
     $.ajax({
-        type: 'POST',
-        url: '../Controller/Etiqueta.php',
+        type: 'GET',
+        url: `../api_core/cURL/cURL.php/?recurso=etiqueta&id=${tarefaID}`,
         dataType: 'json',
-        data: {
-            acao: "BUSCAR",
-            tarefaID: tarefaID
-        }
     }).done(function(resultado){
-        if(resultado.resposta === "sucesso"){
-            console.log(resultado.sucesso);
-            console.log(resultado.etiquetas);
-            etiquetas = resultado.etiquetas; 
+        if(resultado.status == 200){
+            console.log(resultado.dados);
+            etiquetas = resultado.dados; 
             renderizarEtiquetas();          
         } else {
-            console.log("Nenhuma etiqueta encontrada para esta tarefa.");
+            console.log(resultado.mensagem);
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.log("AJAX erro:", textStatus, errorThrown, jqXHR.responseText);
@@ -206,3 +140,64 @@ $("#btn-executarEditar-etiqueta").click(function() {
     $("#nomeDaEtiqueta").val("");
     $("#corDaEtiqueta").val("#000000");
 });
+
+/*
+function adicionarEtiqueta() {
+    const listaDeEtiquetas = etiquetas;
+
+    if (listaDeEtiquetas.length == 0) {
+        return;
+    }
+
+    $.ajax({
+        url: "../Controller/Etiqueta.php",
+        type: "POST",
+        data: {
+            acao: "ADICIONAR",
+            listaDeEtiquetas: JSON.stringify(listaDeEtiquetas)
+        },
+        dataType: "json"
+    })
+    .done(function (resultado) {
+        if (resultado.resposta == "sucesso") {
+            console.log("Etiqueta adicionada com sucesso: " + resultado.mensagem);
+        } else {
+            console.log("Erro ao adicionar etiqueta: " + resultado.mensagem);
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        console.error("Erro na requisição AJAX:", textStatus, errorThrown, jqXHR);
+        alert("Erro ao enviar etiquetas. Tente novamente.");
+    });
+}
+
+function actualizarEtiquetas(){
+    const listaDeEtiquetas = etiquetas;
+
+    console.log(listaDeEtiquetas);
+
+    if(listaDeEtiquetas.length <= 0){
+        return;
+    }
+
+    $.ajax({
+        url: '../Controller/Etiqueta.php',
+        method: 'POST',
+        data: {
+            acao: 'ACTUALIZAR',
+            listaDeEtiquetas: JSON.stringify(listaDeEtiquetas)
+        },
+        dataType: 'json'
+    }).done(function(resultado){
+        if(resultado.resposta == "sucesso"){
+            console.log("Tarefas actualizadas com sucesso");
+        }else{
+            console.log(resultado.mensagem);
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.log("AJAX erro:", textStatus, errorThrown, jqXHR.responseText);
+    });
+
+    etiquetas = [];
+}
+*/

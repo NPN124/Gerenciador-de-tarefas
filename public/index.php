@@ -3,6 +3,7 @@ header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 
+require_once __DIR__ ."/../Controller/Etiqueta.php";
 require_once __DIR__ ."/../Controller/Tarefa.php";
 require_once __DIR__ ."/../conexao.php";
 require_once __DIR__ ."/../api_core/resposta.php";
@@ -13,6 +14,7 @@ function alertRedirect($mensagem, $url = '../../index.php') {
         alert('{$mensagem}');
         window.location.href = '{$url}';
     </script>";
+    header("Location: $url");
     exit; 
 }
 
@@ -57,13 +59,25 @@ if ($recurso === "tarefa") {
         case "POST":
             TarefaController::adicionarTarefa($dados, $id_Usuario);
             break;
-
         case "PUT":
             TarefaController::atualizarTarefa($dados, $id_Usuario);
             break;
-
         case "DELETE":
-            TarefaController::removerTarefa($idTarefa, $id_Usuario);
+            TarefaController::removerTarefa($id);
+            break;
+        default:
+            echo Resposta::json(405, "Método não permitido");
+            break;
+    }
+}
+
+if ($recurso === "etiqueta") {
+    switch ($method) {
+        case "GET":
+            if($id){
+                EtiquetasController::buscarEtiquetaPorId($id);
+            }
+            EtiquetasController::getEtiquetas($id_Usuario);
             break;
         default:
             echo Resposta::json(405, "Método não permitido");

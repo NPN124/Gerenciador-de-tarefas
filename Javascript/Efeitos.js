@@ -44,5 +44,9 @@ function mostrarDIV_2(container, mostrar = true) {
     }
 }
 
+function removerTarefaDaLista(tarefaID){
+    $(`#tarefa_${tarefaID}`).fadeOut(500);
+}
+
 
 

@@ -20,7 +20,7 @@ class TarefaController {
                 echo Resposta::json(404, 'tarefa não encontrada');
             }
         } catch (Exception $e) {
-            error_log($e->getMessage());
+            error_log("Erro ao listar tarefas: ".$e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "erro ao comunicar com o servidor");
         }
     }
@@ -66,7 +66,7 @@ class TarefaController {
 
             echo Resposta::json(201, "Tarefa adicionada com sucesso", ["id" => $idTarefa]);
         } catch (Exception $e) {
-            error_log("Erro ao adicionar tarefa: " .$e->getMessage());
+            error_log("Erro ao adicionar tarefa: " .$e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "Erro ao adicionar tarefa");
         }
     }
@@ -82,8 +82,8 @@ class TarefaController {
                 echo Resposta::json(500, "Erro ao remover tarefa");
             }
         } catch (Throwable $e) {
-            error_log($e->getMessage());
-            echo Resposta::json(500, "Erro ao remover tarefa: {$e->getMessage()}");
+            error_log("Erro ao remover Tarefa " .$e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
+            echo Resposta::json(500, "Erro ao remover tarefa");
         }
     }
 
@@ -99,8 +99,8 @@ class TarefaController {
                 echo Resposta::json(404, "Nenhuma tarefa encontrada");
             }
         } catch (Throwable $e) {
-            error_log($e->getMessage());
-            echo Resposta::json(500, "Erro ao pesquisar tarefas: {$e->getMessage()}");
+            error_log($e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
+            echo Resposta::json(500, "Erro ao pesquisar tarefas");
         }
     }
 
@@ -129,8 +129,8 @@ class TarefaController {
                 echo Resposta::json(500, "Falha ao atualizar a tarefa");
             }
         } catch (Throwable $e) {
-            error_log($e->getMessage());
-            echo Resposta::json(500, "Erro inesperado ao atualizar tarefa: {$e->getMessage()}");
+            error_log("Erro ao actualizar tarefa: " . $e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
+            echo Resposta::json(500, "Erro inesperado ao atualizar tarefa");
         }
     }
 
@@ -146,8 +146,8 @@ class TarefaController {
                 echo Resposta::json(404, "Tarefa não encontrada");
             }
         } catch (Throwable $e) {
-            error_log($e->getMessage());
-            echo Resposta::json(500, "Erro ao buscar tarefa: {$e->getMessage()}");
+            error_log("Erro ao buscar tarefa por: " .$e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
+            echo Resposta::json(500, "Erro ao buscar tarefa");
         }
     }
 
@@ -162,8 +162,8 @@ class TarefaController {
                 echo Resposta::json(500, "Erro ao concluir a tarefa");
             }
         } catch (Throwable $e) {
-            error_log($e->getMessage());
-            echo Resposta::json(500, "Erro ao concluir a tarefa: {$e->getMessage()}");
+            error_log("Erro ao concluir tarefa: " .$e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
+            echo Resposta::json(500, "Erro ao concluir a tarefa");
         }
     }
 }

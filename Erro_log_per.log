@@ -1,0 +1,1 @@
+Erro ao remover Tarefa SQLSTATE[22007]: Invalid datetime format: 1292 Truncated incorrect DOUBLE value: 'undefined'

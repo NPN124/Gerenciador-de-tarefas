@@ -1,3 +1,5 @@
+
+
 $('#formulario-adicionar-titulo-tarefa').submit(adicionarTituloTarefa)
 $('#btn-adicionar').on('click', adicionarTarefa);
 
@@ -31,7 +33,10 @@ $('.container-tarefas').on('change', '#concluirTarefas', function() {
 
 $('#btn-atualizar').on('click', atualizarTarefa);
 
-$('.container-tarefas').on('click', '.remover', removerTarefa);
+$('.container-tarefas').on('click', '.remover', function(){
+        const tarefaID = $(this).data("id");
+        removerTarefa(tarefaID);
+});
 
 $('#pesquisa').on('input', PesquisarTarefaPeloTitulo);
 
@@ -115,7 +120,7 @@ function adicionarTarefa() {
     };
 
     if (listaDeEtiquetas && listaDeEtiquetas.length > 0) {
-        tarefa_etiquetas.listaDeEtiquetas = JSON.stringify(listaDeEtiquetas);
+        tarefa_etiquetas.listaDeEtiquetas = listaDeEtiquetas;
     }
 
     $.ajax({
@@ -126,11 +131,10 @@ function adicionarTarefa() {
     }).done(function (resultado) {
         $('#btn-adicionar').prop('disabled', false);
         console.log(resultado);
-        if (resultado.status == 200) {
+        if (resultado.status == 201) {
             listarTarefas();
         } else {
-            console.log("Erro ao adicionar tarefa");
-            console.log(resultado.mensagem || resultado.message);
+            console.log(resultado.mensagem);
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.log("AJAX erro:", textStatus, errorThrown, jqXHR.responseText);
@@ -296,30 +300,26 @@ function concluirTarefa(tarefaID) {
 
 }
 
-function removerTarefa() {
+function removerTarefa(tarefaID) {
 
 
     if (!confirm("Tem certeza que deseja apagar a tarefa?")) {
         return;
     };
 
-    const tarefaID = $(".remover").data('id');
-
     $.ajax({
-        type: 'POST',
-        url: '../Controller/Tarefa.php',
-        data: {
-            acao: 'APAGAR',
-            id: tarefaID
-        },
+        type: 'DELETE',
+        url: `../api_core/cURL/cURL.php/?recurso=tarefa&id=${tarefaID}`,
         dataType: 'json',
     }).done(function (resultado) {
-        if (resultado.resposta == 'sucesso') {
-            listarTarefas();
+        console.log(resultado);
+        if (resultado.status == 200) {
+            removerTarefaDaLista(tarefaID);
             $('#pesquisa').val('');
-            console.log("Tarefa removida com sucesso");
+                console.log(tarefaID);
+            console.log(resultado);
         } else {
-            console.log("Erro ao remover tarefa");
+            console.log(resultado.mensagem);
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.log("AJAX erro:", textStatus, errorThrown, jqXHR.responseText);
@@ -335,8 +335,6 @@ function listarTarefas() {
         method: 'GET',
         dataType: 'json'
     }).done(function (resultado) {
-
-        console.log(resultado);
         const tarefas = resultado.dados;
         const pendentes = tarefas.filter(t => t.status === "pendente" || t.status === "em_andamento");
         const concluidas = tarefas.filter(t => t.status === "concluida");
@@ -346,7 +344,7 @@ function listarTarefas() {
                     const tarefa = lista[i];
 
                     const elemento = $(`
-                    <div class="tarefa" style="display:none;">
+                    <div class="tarefa" id="tarefa_${tarefa.id}" style="display:none;">
                         <div class="container-apenas-tarefas">
                             <div class="checkbox-tarefa">
                                 <input type="checkbox" id="concluirTarefas" name="tarefa${i}" data-id="${tarefa.id}"/>

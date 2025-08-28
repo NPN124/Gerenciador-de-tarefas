@@ -2,6 +2,8 @@
 CREATE DATABASE bd_tarefas;
 USE bd_tarefas;
 
+DROP DATABASE bd_tarefas;
+
 
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
