@@ -41,7 +41,7 @@ class TarefaController {
 
             $idTarefa = $tarefaDAO->adicionarTarefa($tarefa);
             if (!$idTarefa) {
-                echo Resposta::json(401, "Erro ao adicionar tarefa");
+                echo Resposta::json(400, "Erro ao adicionar tarefa");
                 exit();
             }
 
@@ -56,7 +56,7 @@ class TarefaController {
                         $idEtiqueta = $etiquetaDAO->adicionarEtiqueta($etiqueta);
 
                         if (!$idEtiqueta) {
-                            echo Resposta::json(401, "Erro ao adicionar etiqueta");
+                            echo Resposta::json(400, "Erro ao adicionar etiqueta");
                             exit();
                         }
                     }
@@ -64,12 +64,10 @@ class TarefaController {
                 }
             }
 
-            echo Resposta::json(200, "Tarefa adicionada com sucesso", ["id" => $idTarefa]);
-            exit;
+            echo Resposta::json(201, "Tarefa adicionada com sucesso", ["id" => $idTarefa]);
         } catch (Exception $e) {
             error_log("Erro ao adicionar tarefa: " .$e->getMessage());
             echo Resposta::json(500, "Erro ao adicionar tarefa");
-            exit();
         }
     }
 
@@ -87,8 +85,6 @@ class TarefaController {
             error_log($e->getMessage());
             echo Resposta::json(500, "Erro ao remover tarefa: {$e->getMessage()}");
         }
-
-        exit();
     }
 
     public static function pesquisarTarefas($pesquisa)
@@ -106,8 +102,6 @@ class TarefaController {
             error_log($e->getMessage());
             echo Resposta::json(500, "Erro ao pesquisar tarefas: {$e->getMessage()}");
         }
-
-        exit();
     }
 
     public static function atualizarTarefa($dados, $usuarioID)
@@ -121,7 +115,7 @@ class TarefaController {
 
         if (!$id || !$titulo || !$prazo || !$prioridade || !$status) {
             echo Resposta::json(400, "Campos obrigatórios não informados");
-            exit();
+            exit;
         }
 
         $tarefa = new Tarefa($id, $usuarioID, $titulo, $prazo, $prioridade, $status, $descricao);
@@ -138,8 +132,6 @@ class TarefaController {
             error_log($e->getMessage());
             echo Resposta::json(500, "Erro inesperado ao atualizar tarefa: {$e->getMessage()}");
         }
-
-        exit();
     }
 
     public static function buscarTarefaPorId($id)
@@ -157,7 +149,6 @@ class TarefaController {
             error_log($e->getMessage());
             echo Resposta::json(500, "Erro ao buscar tarefa: {$e->getMessage()}");
         }
-        exit();
     }
 
     public static function concluirTarefa($id)
@@ -174,7 +165,6 @@ class TarefaController {
             error_log($e->getMessage());
             echo Resposta::json(500, "Erro ao concluir a tarefa: {$e->getMessage()}");
         }
-        exit();
     }
 }
 ?>

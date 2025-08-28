@@ -1,10 +1,12 @@
 <?php 
+header("Content-Type: application/json");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+
 require_once __DIR__ ."/../Controller/Tarefa.php";
 require_once __DIR__ ."/../conexao.php";
 require_once __DIR__ ."/../api_core/resposta.php";
 require_once __DIR__ ."/../models/SessaoDAO.php";
-
-header("Content-Type: application/json");
 
 function alertRedirect($mensagem, $url = '../../index.php') {
     echo "<script>
@@ -14,7 +16,9 @@ function alertRedirect($mensagem, $url = '../../index.php') {
     exit; 
 }
 
-$token = "token_68af47707b0c04.29683538";
+$heders = getallheaders();
+
+$token = $heders["X-Token"] ?? null;
 
 try {
     if (!$token) {
@@ -36,14 +40,20 @@ try {
 $recurso = $_GET['recurso'] ?? null;
 $id      = $_GET['id'] ?? null;
 $method  = $_SERVER['REQUEST_METHOD'];
+$search = $_GET['search'] ?? null;
 $dados   = json_decode(file_get_contents('php://input'), true) ?? null;
 
 if ($recurso === "tarefa") {
     switch ($method) {
         case "GET":
-            TarefaController::getTarefas($id_Usuario);
+            if($search){
+                TarefaController::pesquisarTarefas($search);
+            }elseif($id){
+                TarefaController::buscarTarefaPorId($id);
+            }else{
+                TarefaController::getTarefas($id_Usuario);
+            }
             break;
-
         case "POST":
             TarefaController::adicionarTarefa($dados, $id_Usuario);
             break;
@@ -53,13 +63,8 @@ if ($recurso === "tarefa") {
             break;
 
         case "DELETE":
-            if ($id) {
-                TarefaController::removerTarefa($idTarefa, $id_Usuario);
-            } else {
-                echo Resposta::json(400, "ID não informado para exclusão");
-            }
+            TarefaController::removerTarefa($idTarefa, $id_Usuario);
             break;
-
         default:
             echo Resposta::json(405, "Método não permitido");
             break;

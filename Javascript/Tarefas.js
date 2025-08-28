@@ -1,6 +1,3 @@
-
-console.log("tua gggggggggg");
-
 $('#formulario-adicionar-titulo-tarefa').submit(adicionarTituloTarefa)
 $('#btn-adicionar').on('click', adicionarTarefa);
 
@@ -54,19 +51,15 @@ function PesquisarTarefaPeloTitulo() {
     console.log("Valor atual:", valor);
 
     $.ajax({
-        type: 'POST',
-        url: '../Controller/Tarefa.php',
-        data: {
-            acao: 'PESQUISAR',
-            pesquisa: valor
-        },
-        dataType: 'json',
+        type: 'GET',
+        url: `../api_core/cURL/cURL.php/?recurso=tarefa&search=${valor}`,
+        dataType: 'json'
     }).done(function (resultado) {
         console.log(resultado.tarefas);
-        if (resultado.resposta == "sucesso") {
-            listarTarefasEspecificas(resultado.tarefas);
+        if (resultado.status == 200) {
+            listarTarefasEspecificas(resultado.dados);
         } else {
-            console.log("Tarefa não encontrada");
+            console.log(resultado.mensage);
         }
     })
 }
