@@ -21,7 +21,7 @@ $headers = [
 //Iniciar cURL
 $curl = curl_init();
 //Adapte a URL base para o seu projecto, considerando o seu localhost
-$URL = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}";
+$URL = "http://localhost/TPW3_PHP\Gerenciador-de-tarefas/public/index.php?recurso={$recurso}";
 
 if ($id) {
     $URL .= "&id={$id}";
