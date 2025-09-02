@@ -1,5 +1,3 @@
-
-
 $('#formulario-adicionar-titulo-tarefa').submit(adicionarTituloTarefa)
 $('#btn-adicionar').on('click', adicionarTarefa);
 
@@ -8,7 +6,6 @@ $('#btn-cancelar').on('click', cancelarTarefa);
 $('.container-tarefas').on('click', '.editar', function(){
     const tarefaID = $(this).data("id");
     escolherTarefaAEditar(tarefaID);
-    buscarEtiquetas(tarefaID);
     $(".campo-botao").css({
         display: 'none'
     });
@@ -117,7 +114,6 @@ function adicionarTarefa() {
         dataType: 'json'
     }).done(function (resultado) {
         $('#btn-adicionar').prop('disabled', false);
-        console.log(resultado);
         if (resultado.status == 201) {
             listarTarefas();
         } else {
@@ -183,30 +179,29 @@ function escolherTarefaAEditar(tarefa_id) {
     $('#btn-atualizar').data("id", tarefaID);
 
     console.log("ID da tarefa a ser editada:", tarefaID);
-    buscarEtiquetas(tarefaID);
-
     $.ajax({
-        type: 'POST',
-        url: '../Controller/Tarefa.php',
-        data: {
-            acao: 'BUSCAR',
-            id: tarefaID
-        },
+        type: 'GET',
+        url: `../api_core/cURL/cURL.php/?recurso=tarefa&id=${tarefaID}`,
         dataType: 'json',
     }).done(function (resultado) {
         console.log(resultado);
-        if (resultado.resposta == 'sucesso') {
-            console.log("Tarefa encontrada:", resultado.tarefa);
-            $('#titulo').val(resultado.tarefa.titulo);
-            $('#prioridade').val(resultado.tarefa.prioridade);
-            $('#prazo').val(resultado.tarefa.prazo);
-            $('#status').val(resultado.tarefa.status);
-            $('#descricao').val(resultado.tarefa.descricao);
+        if (resultado.status == 200) {
+            const tarefa = resultado.dados;
+            console.log("Tarefa encontrada:", tarefa.tarefa);
+            $('#titulo').val(tarefa.titulo);
+            $('#prioridade').val(tarefa.prioridade);
+            $('#prazo').val(tarefa.prazo);
+            $('#status').val(tarefa.status);
+            $('#descricao').val(tarefa.descricao);
         }
     });
 }
 
+
 function atualizarTarefa() {
+    $('#btn-adicionar').css({ display: 'none' });
+    $('#btn-atualizar').css({ display: 'block' });
+
     const tarefaID = $('#btn-atualizar').data('id');
     const titulo = $('#titulo').val();
     const prioridade = $('#prioridade').val();
@@ -214,50 +209,66 @@ function atualizarTarefa() {
     const status = $('#status').val();
     const descricao = $('#descricao').val();
 
-    console.log("ID da tarefa:", tarefaID);
+    const listaDeEtiquetas = etiquetas;
+
+    if (!titulo || !prazo) {
+        alert("Preencha todos os campos obrigatórios!");
+        $('#btn-atualizar').prop('disabled', false);
+        return;
+    }
 
     let tarefa_etiquetas = {
-        acao: 'ACTUALIZAR',
         id: tarefaID,
         titulo: titulo,
         prioridade: prioridade,
         prazo: prazo,
         status: status,
-        descricao: descricao,
+        descricao: descricao
     };
 
-    actualizarEtiquetas();
+    if (listaDeEtiquetas && listaDeEtiquetas.length > 0) {
+        tarefa_etiquetas.listaDeEtiquetas = listaDeEtiquetas;
+    }
 
     $.ajax({
-        type: 'POST',
-        url: '../Controller/Tarefa.php',
-        data: tarefa_etiquetas,
-        dataType: 'json',
+        type: 'PUT',
+        url: '../api_core/cURL/cURL.php/?recurso=tarefa',
+        data: JSON.stringify(tarefa_etiquetas),
+        contentType: 'application/json',  // 🔑 importante para enviar JSON corretamente
+        dataType: 'json'
     }).done(function (resultado) {
-        $('btn-adicionar').prop('disabled', false);
-        if (resultado.resposta == 'sucesso') {
+        $('#btn-atualizar').prop('disabled', false);
+        console.log(resultado);
+
+        if (resultado.status == 200) {
             listarTarefas();
-            alert("Tarefa atualizada com sucesso");
+            alert("Tarefa atualizada com sucesso!");
+
+            // ✅ Resetar campos apenas se deu sucesso
+            $('#tituloDaTarefa').val('');
+            $('#titulo').val('');
+            $('#prioridade').prop('selectedIndex', 0);
+            $('#prazo').val('');
+            $('#btn-formulario-adicionar-etiqueta').text("Adicionar Etiqueta");
+            $('#status').prop('selectedIndex', 0);
+            $('#descricao').val('');
+            etiquetas = [];
+            $("#lista-de-etiquetas").empty();
+
+            mostrarFundo(false);
+            mostrarDIV($('.container-adicionar-tarefa'), false);
+            $(".campo-botao").css({ display: 'block' });
         } else {
-            console.log("resposta:", resultado.message);
+            console.log("Erro ao atualizar:", resultado.mensagem || resultado);
+            alert("Não foi possível atualizar a tarefa.");
         }
-
-        $('#tituloDaTarefa').val('');
-        $('#titulo').val('');
-        $('#prioridade').prop('selectedIndex', 0);
-        $('#prazo').val('');
-        $('#status').prop('selectedIndex', 0);
-        $('#descricao').val('');
-
-        console.log("Tarefa atualizada com sucesso");
-
-        $('.container-adicionar-tarefa').slideUp(200);
     }).fail(function (jqXHR, textStatus, errorThrown) {
+        $('#btn-atualizar').prop('disabled', false);
         console.log("AJAX erro:", textStatus, errorThrown, jqXHR.responseText);
+        alert("Erro na requisição ao atualizar a tarefa.");
     });
-    mostrarFundo(false);
-    mostrarDIV($('.container-adicionar-tarefa'), false);
 }
+
 
 function concluirTarefa(tarefaID) {
 
@@ -430,11 +441,6 @@ function listarTarefasEspecificas(tarefasArray) {
         listarEtiquetasNaTarefa(tarefa.id, containerEtiquetas);
     }
 }
-
-
-
-
-
 
 
 

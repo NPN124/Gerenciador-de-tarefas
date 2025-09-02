@@ -18,23 +18,19 @@ function carregarVisualizar(tarefaID) {
     $('#status-visualizacao').text("");
     $('#descricao-visualizacao').text("");
 
-    buscarEtiquetas(tarefaID);
-
     $.ajax({
-        type: 'POST',
-        url: '../Controller/Tarefa.php',
-        data: {
-            acao: 'BUSCAR',
-            id: tarefaID
-        },
+        type: 'GET',
+        url: `../api_core/cURL/cURL.php?recurso=tarefa&id=${tarefaID}`,
         dataType: 'json'
     }).done(function (resultado) {
-        if (resultado.resposta === 'sucesso' && resultado.tarefa) {
-            $('#titulo-visualizacao').text(resultado.tarefa.titulo);
-            $('#prioridade-visualizacao').text(resultado.tarefa.prioridade);
-            $('#prazo-visualizacao').text(resultado.tarefa.prazo);
-            $('#status-visualizacao').text(resultado.tarefa.status);
-            $('#descricao-visualizacao').text(resultado.tarefa.descricao);
+        if (resultado.status == 200) {
+
+            const tarefa = resultado.dados;
+            $('#titulo-visualizacao').text(tarefa.titulo);
+            $('#prioridade-visualizacao').text(tarefa.prioridade);
+            $('#prazo-visualizacao').text(tarefa.prazo);
+            $('#status-visualizacao').text(tarefa.status);
+            $('#descricao-visualizacao').text(tarefa.descricao);
         } else {
             $('#titulo-visualizacao').text("Tarefa não encontrada.");
         }
