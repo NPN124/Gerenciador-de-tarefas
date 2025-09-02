@@ -4,6 +4,8 @@ USE bd_tarefas;
 
 DROP DATABASE bd_tarefas;
 
+SELECT * from tarefas;
+
 
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,

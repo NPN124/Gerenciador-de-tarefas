@@ -5,41 +5,40 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 
 require_once __DIR__ ."/../Controller/Etiqueta.php";
 require_once __DIR__ ."/../Controller/Tarefa.php";
+require_once __DIR__ ."/../Controller/Usuario.php";
 require_once __DIR__ ."/../conexao.php";
 require_once __DIR__ ."/../api_core/resposta.php";
 require_once __DIR__ ."/../models/SessaoDAO.php";
 
-function alertRedirect($mensagem, $url = '../../index.php') {
-    echo "<script>
-        alert('{$mensagem}');
-        window.location.href = '{$url}';
-    </script>";
-    header("Location: $url");
-    exit; 
-}
-
-$heders = getallheaders();
-
-$token = $heders["X-Token"] ?? null;
-
-try {
-    if (!$token) {
-        alertRedirect('Token vazio. Faça login novamente.');
-    }
-
-    $isValid = SessaoDAO::verificarSessao($token);
-    if (!$isValid) {
-        alertRedirect('Sessão inválida. Faça login novamente.');
-    }
-
-    $id_Usuario = SessaoDAO::getIdUsuario($token);
-
-} catch (Exception $e) {
-    alertRedirect('Sessao expirada');
-    exit;
-}
-
 $recurso = $_GET['recurso'] ?? null;
+
+    function alertRedirect($mensagem, $url = '../../index.php'){
+        die($mensagem);
+        header("Location: $url");
+        exit;
+    }
+
+    $heders = getallheaders();
+
+    $token = $heders["X-Token"] ?? null;
+
+    try {
+        if (!$token) {
+            alertRedirect('Token vazio. Faça login novamente.');
+        }
+
+        $isValid = SessaoDAO::verificarSessao($token);
+        if (!$isValid) {
+            alertRedirect('Sessão inválida. Faça login novamente.');
+        }
+
+        $id_Usuario = SessaoDAO::getIdUsuario($token);
+
+    } catch (Exception $e) {
+        alertRedirect('Sessao expirada');
+        exit;
+    }
+
 $id      = $_GET['id'] ?? null;
 $method  = $_SERVER['REQUEST_METHOD'];
 $search = $_GET['search'] ?? null;
@@ -82,6 +81,21 @@ if ($recurso === "etiqueta") {
         default:
             echo Resposta::json(405, "Método não permitido");
             break;
+    }
+
+    if($recurso === "usuario"){
+
+        switch($method){
+            case "GET":
+                // Implementar se necessário
+                break;
+            case "POST":
+                UsuarioController::cadastrarUsuario($dados['nome'], $dados['email'], $dados['senha']);
+                break;
+            default:
+                echo Resposta::json(405, "Método não permitido");
+                break;
+        }
     }
 }
 ?>

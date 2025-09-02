@@ -74,22 +74,9 @@ function adicionarTituloTarefa(event) {
     event.preventDefault();
 
     const tituloDaTarefa = $('#tituloDaTarefa').val().trim();
-
-    $.ajax({
-        type: 'POST',
-        url: '../View/Menu.php',
-        data: {
-            tituloDaTarefa: tituloDaTarefa
-        },
-        dataType: 'json',
-    }).done(function (resultado) {
-        if (resultado.resposta == 'sucesso') {
-            const div = $('.container-adicionar-tarefa');
-            $('#titulo').val(tituloDaTarefa);
-        }
-    });
     mostrarFundo(true);
     mostrarDIV($('.container-adicionar-tarefa'), true);
+    $('#titulo').val(tituloDaTarefa);
 }
 
 function adicionarTarefa() {
@@ -220,8 +207,6 @@ function escolherTarefaAEditar(tarefa_id) {
 }
 
 function atualizarTarefa() {
-    console.log("Atualizando tarefa...");
-
     const tarefaID = $('#btn-atualizar').data('id');
     const titulo = $('#titulo').val();
     const prioridade = $('#prioridade').val();

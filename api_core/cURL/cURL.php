@@ -5,23 +5,36 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 require_once __DIR__ . "/../../api_core/resposta.php";
 
 $recurso = $_GET['recurso'];
-$method = $_SERVER['REQUEST_METHOD'];
-$id = $_GET['id'] ?? null;
-$search = $_GET['search'] ?? null;
-$token = $_COOKIE["tpwSSID"];
+$method  = $_SERVER['REQUEST_METHOD'];
+$id      = $_GET['id'] ?? null;
+$search  = $_GET['search'] ?? null;
+$token   = $_COOKIE["tpwSSID"];
 
-//Pegar dados do corpo da requisição, enviado pelo ajax 
+// Rotas públicas (não precisam de token)
+$rotasPublicas = ['usuario'];
+
+// Pegar dados do corpo da requisição enviado pelo AJAX
 $dadosJSON = file_get_contents("php://input") ?? null;
 
-//Definindo headers
-$headers = [
-    "X-Token: $token",
-];
-
-//Iniciar cURL
+// Iniciar cURL
 $curl = curl_init();
-//Adapte a URL base para o seu projecto, considerando o seu localhost
-$URL = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}";
+
+if(!in_array($recurso, $rotasPublicas)){
+    if(!$token){
+        echo Resposta::json(401, "Token vazio. Faça login novamente.");
+        exit;
+    }
+    $URL = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}";
+    curl_setopt($curl, CURLOPT_HTTPHEADER, [
+        "X-Token: $token",
+        "Content-Type: application/json"
+    ]);
+} else {
+    $URL = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/rotas_publicas/index.php?recurso={$recurso}";
+    curl_setopt($curl, CURLOPT_HTTPHEADER, [
+        "Content-Type: application/json"
+    ]);
+}
 
 if ($id) {
     $URL .= "&id={$id}";
@@ -31,10 +44,10 @@ if ($search) {
     $URL .= "&search={$search}";
 }
 
-
 curl_setopt($curl, CURLOPT_URL, $URL);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
+// Configurar método
 switch ($method) {
     case "GET":
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
@@ -52,9 +65,9 @@ switch ($method) {
         break;
     default:
         echo Resposta::json(400, "Metodo de requisição não existe");
+        exit;
 }
 
-curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 $resposta = curl_exec($curl);
 echo $resposta;
 curl_close($curl);

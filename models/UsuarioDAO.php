@@ -20,12 +20,7 @@ class UsuarioDAO {
         $stmt->bindParam(':tipo_usuario', $tipo_usuario);
         $stmt->bindParam(':status', $status);
         $stmt->bindParam(':criado_em', $criado_em);
-        if ($stmt->execute()) {
-            header("Location: ../index.php");
-            exit();
-        } else {
-            echo "<p style='color: red;'>Erro ao adicionar usuário.</p>";
-        }
+        return $stmt->execute();
     }
 
     public static function listaDeUsuarios() {

@@ -1,30 +1,5 @@
-<?php
-include_once(__DIR__ . "/../conexao.php");
-require_once __DIR__ . '/../models/UsuarioDAO.php';
-
-session_start();
-$tipo_usuario = $_SESSION['usuario_tipo'];
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nome = $_POST["nome"];
-    $email = $_POST["email"];
-    $senha = $_POST["senha"];
-    $tipo_usuario = $_POST["tipo_usuario"] ?? 'usuario';
-
-    if (UsuarioDAO::verificarSeUsuarioExiste($email)) {
-        $mensagem = "Usuario já cadastrado. Por favor, tente outro email.";
-    } else {
-        if (!empty($nome) && !empty($email) && !empty($senha)) {
-            UsuarioDAO::adicionarUsuario($nome, $email, $senha, $tipo_usuario);
-        } else {
-            echo "<script>alert('Preencha todos os campos!');</script>";
-        }
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="pt">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,19 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="senha" id="senha" required>
             </div>
 
-            <div class="input-group">
-                <?php if ($tipo_usuario == "admin") { ?>
-                    <select name="tipo_usuario" id="tipo_usuario" required>
-                        <option value="" disabled selected hidden>Selecione o tipo de usuário</option>
-                        <option value="usuario">Usuário</option>
-                        <option value="admin">Administrador</option>
-                    </select>
-                    <label for="tipo_usuario">Tipo de Usuário</label>
-                <?php } else { ?>
-                <?php } ?>
-            </div>
-
-            <span><?php echo $mensagem ?? " " ?></span>
+            <span class="mensagem"></span>
 
             <div class="btns">
                 <button type="submit" class="buttons">Adicionar</button>
@@ -97,6 +60,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     email: "Por favor, insira um email válido",
                     senha: "Por favor, insira a senha"
                 }
+            });
+        });
+        $("#cadastro").on("submit", function(e) {
+            e.preventDefault();
+
+            const dados = {
+                nome: $("#nome").val(),
+                email: $("#email").val(),
+                senha: $("#senha").val()
+            };
+
+            $.ajax({
+                url: "../api_core/cURL/cURL.php?recurso=usuario",
+                type: "POST",
+                data: JSON.stringify(dados),
+                dataType: "json"
+            }).done(function(resultado) {
+                if (resultado.status == 201) {
+                    alert(resultado.mensagem);
+                    $(".menagem").text(resultado.mensagem);
+                    window.location.href = "../index.php";
+                }else{
+                    $(".mensagem").text(resultado.mensagem);
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error("Erro:", textStatus, errorThrown);
+                alert(resultado.mensagem);
             });
         });
     </script>

@@ -6,8 +6,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST["email"];
     $senha = $_POST["senha"];
 
-    if (UsuarioMetodos::verificarUsuario($email, $senha)) {
-        echo json_encode(["status" => "ok"]);
+    if (UsuarioController::verificarUsuario($email, $senha)) {
+        echo json_encode(["status" => 200]);
     } else {
         echo json_encode(["status" => "erro", "mensagem" => "Email ou senha incorretos."]);
     }
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 },
                 dataType: 'json'
             }).done(function(result) {
-                if (result.status == "ok") {
+                if (result.status == 200) {
                     window.location.href = "View/Home.php";
                 } else {
                     $('.error-message').text(result.mensagem);

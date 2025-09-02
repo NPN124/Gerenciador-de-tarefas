@@ -1,15 +1,4 @@
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $titulo = $_POST["tituloDaTarefa"];
 
-    if ($titulo && trim($titulo) !== '') {
-        echo json_encode(["resposta" => "sucesso"]);
-    } else {
-        echo json_encode(["resposta" => "erro"]);
-    }
-    exit();
-}
-?>
 
 <!DOCTYPE html>
 <html lang="pt">
