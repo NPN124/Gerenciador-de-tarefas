@@ -1,6 +1,6 @@
 <?php
 class Logger {
-    public static function exibirErro(Exception|Throwable $e, $textoExtra = "Erro") {
+    public static function exibirErro(PDOException|Exception|Throwable $e, $textoExtra = "Erro") {
         $erroCompleto = "\n==================== ERRO ====================\n"
             . $textoExtra . ":\n"
             . "Mensagem: " . $e->getMessage() . "\n"

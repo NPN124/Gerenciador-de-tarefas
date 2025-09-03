@@ -1,5 +1,7 @@
 <?php 
-
+session_start();
+$nome = $_SESSION['usuario_nome'] ?? 'Usuário';
+$perfil = $_SESSION['usuario_tipo'];
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +21,8 @@
         <div class="perfil-container">
             <div class="perfil-info">
                 <div id="nome-container">
-
+                    <h2>Usuário</h2>
+                    <p><span id="nome-usuario"><?php echo $nome?></span></p>
                 </div>
             </div>
             <div class="foto-perfil"></div>

@@ -13,7 +13,7 @@ Class EtiquetasController{
         try {
             $etiquetas = $etiquetaDAO->listaDeEstiquetas($usuarioID);
             echo Resposta::json(200, 'sucesso', $etiquetas);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             error_log("Erro ao listar tarefas: ". $e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "Erro ao carregar etiquetas");
         }
@@ -29,7 +29,7 @@ Class EtiquetasController{
             } else {
                 echo Resposta::json(405, "Erro ao buscar etiquetas");
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             error_log("Erro ao buscar etiquetas de uma tarefa: " . $e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "Erro no servidor ao listar etiquetas");
         }

@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . "/Controller/Usuario.php");
 include_once(__DIR__ . "/models/UsuarioDAO.php");
+require_once __DIR__ ."/models/Logger.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST["email"];

@@ -20,7 +20,7 @@ class TarefaController {
             } else {
                 echo Resposta::json(404, 'tarefa não encontrada');
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             error_log(Logger::exibirErro($e, "Erro ao carregar lista de tarefas"), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "erro ao comunicar com o servidor");
         }
@@ -66,7 +66,7 @@ class TarefaController {
             }
 
             echo Resposta::json(201, "Tarefa adicionada com sucesso", ["id" => $idTarefa]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             error_log(Logger::exibirErro($e,"Erro ao adicionar tarefa"), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "Erro ao adicionar tarefa");
         }
@@ -83,7 +83,6 @@ class TarefaController {
                 echo Resposta::json(500, "Erro ao remover tarefa");
             }
         } catch (Throwable $e) {
-
             error_log(Logger::exibirErro($e, "Erro ao remover tarefa"), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "Erro ao remover tarefa");
         }
@@ -101,7 +100,6 @@ class TarefaController {
                 echo Resposta::json(404, "Nenhuma tarefa encontrada");
             }
         } catch (Throwable $e) {
-
             error_log(Logger::exibirErro($e, "erro ao pesquisar Tarefa"), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "Erro ao pesquisar tarefas");
         }

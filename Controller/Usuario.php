@@ -28,26 +28,35 @@ class UsuarioController {
     }
 
 
-    public static function verificarUsuario($email, $senha){
-        $usuarios = UsuarioDAO::listaDeUsuarios();
+    public static function verificarUsuario($email, $senha)
+    {
+        try {
+            $usuarios = UsuarioDAO::listaDeUsuarios();
 
-        foreach ($usuarios as $usuario) {
-            if ($usuario->getEmail() == $email && password_verify($senha, $usuario->getSenha())) {
-                $sessao = new Sessao(
-                    null,
-                    $usuario->getId(),
-                    $_SERVER['HTTP_USER_AGENT'],
-                    self::getToken(),
-                    true,
-                    date('Y-m-d H:i:s'),
-                    date('Y-m-d H:i:s')
-                );
-                setcookie("tpwSSID", $sessao->getToken(), time() + (86400 * 30), "/");
-                SessaoDAO::registarSessao($sessao);
-                return true;
+            foreach ($usuarios as $usuario) {
+                if ($usuario->getEmail() == $email && password_verify($senha, $usuario->getSenha())) {
+                    $sessao = new Sessao(
+                        null,
+                        $usuario->getId(),
+                        $_SERVER['HTTP_USER_AGENT'],
+                        self::getToken(),
+                        true,
+                        date('Y-m-d H:i:s'),
+                        date('Y-m-d H:i:s')
+                    );
+                    setcookie("tpwSSID", $sessao->getToken(), time() + (86400 * 30), "/");
+                    SessaoDAO::registarSessao($sessao);
+
+                    session_start();
+                    $_SESSION['usuario_nome'] = $usuario->getNome();
+                    $_SESSION['usuario_tipo'] = $usuario->getTipoUsuario();
+                    return true;
+                }
             }
+            return false;
+        } catch (Throwable $e) {
+            error_log(Logger::exibirErro($e, "Erro ao tentar logar"),3, __DIR__ . "/../Erro_log_per.log");
         }
-        return false;
     }
     
     public static function getToken(){

@@ -43,7 +43,6 @@ $('#btn-formulario-adicionar-etiqueta').on('click', function () {
 });
 
 $(document).ready(function () {
-    console.log("tua mae");
     listarTarefas();
 });
 

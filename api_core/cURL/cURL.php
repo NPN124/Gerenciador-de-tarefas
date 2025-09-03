@@ -69,5 +69,13 @@ switch ($method) {
 }
 
 $resposta = curl_exec($curl);
+if(curl_errno($curl)){
+    $erro = curl_error($curl);
+    error_log("Erro cURL: $erro \n", 3,  __DIR__ . "/../../Erro_log_per.log");
+    echo Resposta::json(500, "Servidor em manutenção");
+    exit;
+}
 echo $resposta;
 curl_close($curl);
+
+
