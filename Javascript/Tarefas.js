@@ -274,16 +274,14 @@ function concluirTarefa(tarefaID) {
     const idTarefa = tarefaID;
 
     $.ajax({
-        url: '../Controller/Tarefa.php',
-        method: 'POST',
-        data: {
-            acao: "CONCLUIR", 
-            id: idTarefa 
-        },
+        url: '../api_core/cURL/cURL.php/?recurso=tarefa',
+        type: 'POST',
+        data: JSON.stringify({id: idTarefa, concluir: true }),
+        contentType: 'application/json',
         dataType: 'json'
     })
         .done(function (resultado) {
-            if (resultado.resposta === "sucesso") {
+            if (resultado.resposta == 200) {
                 console.log("Tarefa concluída");
             } else {
                 console.log("Falha ao concluir tarefa");

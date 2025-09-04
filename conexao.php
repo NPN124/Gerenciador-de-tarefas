@@ -6,7 +6,7 @@ class DBConnection {
         $host = 'localhost';
         $db   = 'BD_tarefas';
         $user = 'root';
-        $pass = '123';
+        $pass = '';
 
         try {
             $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);

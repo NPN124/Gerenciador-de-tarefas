@@ -24,13 +24,13 @@ if(!in_array($recurso, $rotasPublicas)){
         echo Resposta::json(401, "Token vazio. Faça login novamente.");
         exit;
     }
-    $URL = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}";
+    $URL = "http://localhost/YourM\ADSAWPLS/Gerenciador-de-tarefas/public/index.php?recurso={$recurso}";
     curl_setopt($curl, CURLOPT_HTTPHEADER, [
         "X-Token: $token",
         "Content-Type: application/json"
     ]);
 } else {
-    $URL = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/rotas_publicas/index.php?recurso={$recurso}";
+    $URL = "http://localhost/YourM\ADSAWPLS/Gerenciador-de-tarefas/public/rotas_publicas/index.php?recurso={$recurso}";
     curl_setopt($curl, CURLOPT_HTTPHEADER, [
         "Content-Type: application/json"
     ]);

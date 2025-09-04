@@ -55,7 +55,11 @@ if ($recurso === "tarefa") {
             }
             break;
         case "POST":
-            TarefaController::adicionarTarefa($dados, $id_Usuario);
+            if ($dados['concluir']) {
+                TarefaController::concluirTarefa($dados['id']);
+            } else {
+                TarefaController::adicionarTarefa($dados, $id_Usuario);
+            }
             break;
         case "PUT":
             TarefaController::atualizarTarefa($dados, $id_Usuario);
