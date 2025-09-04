@@ -81,12 +81,9 @@
                     alert(resultado.mensagem);
                     $(".menagem").text(resultado.mensagem);
                     window.location.href = "../index.php";
-                }else{
-                    $(".mensagem").text(resultado.mensagem);
                 }
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 console.error("Erro:", textStatus, errorThrown);
-                alert(resultado.mensagem);
             });
         });
     </script>
