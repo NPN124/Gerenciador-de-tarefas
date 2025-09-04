@@ -13,7 +13,6 @@ require_once __DIR__ ."/../models/SessaoDAO.php";
 $recurso = $_GET['recurso'] ?? null;
 
     function alertRedirect($mensagem, $url = '../../index.php'){
-        die($mensagem);
         header("Location: $url");
         exit;
     }
