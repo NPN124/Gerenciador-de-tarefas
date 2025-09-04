@@ -12,7 +12,7 @@ require_once __DIR__ ."/../models/SessaoDAO.php";
 
 $recurso = $_GET['recurso'] ?? null;
 
-    function alertRedirect($mensagem, $url = '../../index.php'){
+    function alertRedirect($url = '../../index.php'){
         header("Location: $url");
         exit;
     }
@@ -23,18 +23,18 @@ $recurso = $_GET['recurso'] ?? null;
 
     try {
         if (!$token) {
-            alertRedirect('Token vazio. Faça login novamente.');
+            alertRedirect();
         }
 
         $isValid = SessaoDAO::verificarSessao($token);
         if (!$isValid) {
-            alertRedirect('Sessão inválida. Faça login novamente.');
+            alertRedirect();
         }
 
         $id_Usuario = SessaoDAO::getIdUsuario($token);
 
     } catch (Exception $e) {
-        alertRedirect('Sessao expirada');
+        alertRedirect();
         exit;
     }
 
