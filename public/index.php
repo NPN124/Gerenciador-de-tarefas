@@ -26,19 +26,19 @@ $recurso = $_GET['recurso'] ?? null;
             sessaoInvalida();
         }
 
-        $isValid = SessaoDAO::verificarSessao($token);
+        $isValid = SessaoDAO::verificarSessao($token) ?? null;
         if (!$isValid) {
             sessaoInvalida();
         }
 
-        $id_Usuario = SessaoDAO::getIdUsuario($token);
+        $id_Usuario = SessaoDAO::getIdUsuario($token) ?? null;
 
     } catch (Exception $e) {
         sessaoInvalida();
     }
 
 $id      = $_GET['id'] ?? null;
-$method  = $_SERVER['REQUEST_METHOD'];
+$method  = $_SERVER['REQUEST_METHOD'] ?? null;
 $search = $_GET['search'] ?? null;
 $dados   = json_decode(file_get_contents('php://input'), true) ?? null;
 

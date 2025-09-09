@@ -305,7 +305,6 @@ function concluirTarefa(tarefaID) {
 
 function removerTarefa(tarefaID) {
 
-
     if (!confirm("Tem certeza que deseja apagar a tarefa?")) {
         return;
     };
@@ -317,9 +316,9 @@ function removerTarefa(tarefaID) {
     }).done(function (resultado) {
         console.log(resultado);
         if (resultado.status == 200) {
-            removerTarefaDaLista(tarefaID);
             $('#pesquisa').val('');
                 alert("Tarefa removida com sucesso!");
+                removerTarefaDaLista(tarefaID);
         } else if(resultado.status == 401  ) {
             alert("Sua sessão expirou. Faça login novamente.");
             window.location.href = "../index.php";
