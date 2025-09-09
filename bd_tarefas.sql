@@ -4,9 +4,6 @@ USE bd_tarefas;
 
 DROP DATABASE bd_tarefas;
 
-SELECT * from tarefas;
-
-
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100),
@@ -170,29 +167,6 @@ INSERT INTO tarefa_etiqueta (tarefa_id, etiqueta_id) VALUES
 (39, 14), (39, 15),                  -- Tarefa 39: Concluído, TI
 (40, 13), (40, 11);                  -- Tarefa 40: Financeiro, Planejamento
 
-
-
-SELECT * from tarefa_etiqueta;
-
-
-
-CREATE TABLE comentarios (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    conteudo TEXT NOT NULL,
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    usuario_id INT,
-    tarefa_id INT,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-    FOREIGN KEY (tarefa_id) REFERENCES tarefas(id)
-);
-
-CREATE TABLE logs_acoes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT,
-    acao TEXT,
-    data_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-);
 
 CREATE TABLE sessoes (
     id INT AUTO_INCREMENT PRIMARY KEY,

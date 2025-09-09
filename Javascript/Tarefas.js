@@ -281,16 +281,20 @@ function concluirTarefa(tarefaID) {
 
     $.ajax({
         url: '../api_core/cURL/cURL.php/?recurso=tarefa',
-        type: 'POST',
+        type: 'PUT',
         data: JSON.stringify({id: idTarefa, concluir: true }),
         contentType: 'application/json',
         dataType: 'json'
     })
         .done(function (resultado) {
-            if (resultado.resposta == 200) {
-                console.log("Tarefa concluída");
+            if(resultado.status == 401) {
+                alert("Sua sessão expirou. Faça login novamente.");
+                window.location.href = "../index.php";
+                return;
+            }
+            if (resultado.status == 200) {
             } else {
-                console.log("Falha ao concluir tarefa");
+                alert("Falha ao concluir tarefa");
             }
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
@@ -383,6 +387,9 @@ function listarTarefas() {
 
                     elemento.find('.acoes button').prop('disabled', true).css({
                         'cursor': 'not-allowed',
+                    });
+                    elemento.find('.remover').prop('disabled', false).css({
+                        'cursor': 'allowed',
                     });
                 }
                 $('.container-tarefas').append(elemento);
