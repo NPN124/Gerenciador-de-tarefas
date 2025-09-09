@@ -56,12 +56,12 @@ function PesquisarTarefaPeloTitulo() {
         url: `../api_core/cURL/cURL.php/?recurso=tarefa&search=${valor}`,
         dataType: 'json'
     }).done(function (resultado) {
-        console.log(resultado.tarefas);
         if (resultado.status == 200) {
             listarTarefasEspecificas(resultado.dados);
-        } else {
-            console.log(resultado.mensage);
-        }
+        } else if(resultado.status == 401) {
+                alert("Sua sessão expirou. Faça login novamente.");
+                window.location.href = "../index.php";
+        };
     })
 }
 
@@ -115,8 +115,11 @@ function adicionarTarefa() {
         $('#btn-adicionar').prop('disabled', false);
         if (resultado.status == 201) {
             listarTarefas();
-        } else {
-            console.log(resultado.mensagem);
+        } else if(resultado.status == 401) {
+                alert("Sua sessão expirou. Faça login novamente.");
+                window.location.href = "../index.php";
+        }else{
+            alert("Não foi possível adicionar a tarefa.");
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.log("AJAX erro:", textStatus, errorThrown, jqXHR.responseText);
@@ -192,6 +195,11 @@ function escolherTarefaAEditar(tarefa_id) {
             $('#prazo').val(tarefa.prazo);
             $('#status').val(tarefa.status);
             $('#descricao').val(tarefa.descricao);
+        }else if(resultado.status == 401) {
+            alert("Sua sessão expirou. Faça login novamente.");
+            window.location.href = "../index.php";
+        }else {
+            console.log("Tarefa não encontrada.");
         }
     });
 }
@@ -233,7 +241,7 @@ function atualizarTarefa() {
         type: 'PUT',
         url: '../api_core/cURL/cURL.php/?recurso=tarefa',
         data: JSON.stringify(tarefa_etiquetas),
-        contentType: 'application/json',  // 🔑 importante para enviar JSON corretamente
+        contentType: 'application/json',
         dataType: 'json'
     }).done(function (resultado) {
         $('#btn-atualizar').prop('disabled', false);
@@ -242,8 +250,6 @@ function atualizarTarefa() {
         if (resultado.status == 200) {
             listarTarefas();
             alert("Tarefa atualizada com sucesso!");
-
-            // ✅ Resetar campos apenas se deu sucesso
             $('#tituloDaTarefa').val('');
             $('#titulo').val('');
             $('#prioridade').prop('selectedIndex', 0);
@@ -257,14 +263,14 @@ function atualizarTarefa() {
             mostrarFundo(false);
             mostrarDIV($('.container-adicionar-tarefa'), false);
             $(".campo-botao").css({ display: 'block' });
-        } else {
-            console.log("Erro ao atualizar:", resultado.mensagem || resultado);
+        } else if(resultado.status == 401) {
+                alert("Sua sessão expirou. Faça login novamente.");
+                window.location.href = "../index.php";
+        }else{
             alert("Não foi possível atualizar a tarefa.");
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
-        $('#btn-atualizar').prop('disabled', false);
         console.log("AJAX erro:", textStatus, errorThrown, jqXHR.responseText);
-        alert("Erro na requisição ao atualizar a tarefa.");
     });
 }
 
@@ -311,10 +317,12 @@ function removerTarefa(tarefaID) {
         if (resultado.status == 200) {
             removerTarefaDaLista(tarefaID);
             $('#pesquisa').val('');
-                console.log(tarefaID);
-            console.log(resultado);
-        } else {
-            console.log(resultado.mensagem);
+                alert("Tarefa removida com sucesso!");
+        } else if(resultado.status == 401  ) {
+            alert("Sua sessão expirou. Faça login novamente.");
+            window.location.href = "../index.php";
+        }else{
+            alert(resultado.status + ":" +resultado.mensagem);
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.log("AJAX erro:", textStatus, errorThrown, jqXHR.responseText);
@@ -330,6 +338,11 @@ function listarTarefas() {
         method: 'GET',
         dataType: 'json'
     }).done(function (resultado) {
+        if(resultado.status == 401) {
+            alert("Sua sessão expirou. Faça login novamente.");
+            window.location.href = "../index.php";
+            return;
+        }
         const tarefas = resultado.dados;
         const pendentes = tarefas.filter(t => t.status === "pendente" || t.status === "em_andamento");
         const concluidas = tarefas.filter(t => t.status === "concluida");

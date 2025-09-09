@@ -11,8 +11,13 @@ class UsuarioController {
     public static function cadastrarUsuario($nome, $email, $senha, $tipo = 'usuario')
     {
         try {
+            if (empty($nome) || empty($email) || empty($senha)) {
+                echo Resposta::json(400, "Todos os campos são obrigatórios.");
+                exit;
+            }
+            
             if (UsuarioDAO::verificarSeUsuarioExiste($email)) {
-                echo Resposta::json(409, "Usuário já cadastrado. Por favor, tente outro email.");
+                echo Resposta::json(400, "Usuário já cadastrado. Por favor, tente outro email.");
                 exit;
             }
 

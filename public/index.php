@@ -12,8 +12,8 @@ require_once __DIR__ ."/../models/SessaoDAO.php";
 
 $recurso = $_GET['recurso'] ?? null;
 
-    function alertRedirect($url = '../../index.php'){
-        header("Location: $url");
+    function sessaoInvalida(){
+        echo Resposta::json(401, "Token inválido ou expirado. Faça login novamente.");
         exit;
     }
 
@@ -23,19 +23,18 @@ $recurso = $_GET['recurso'] ?? null;
 
     try {
         if (!$token) {
-            alertRedirect();
+            sessaoInvalida();
         }
 
         $isValid = SessaoDAO::verificarSessao($token);
         if (!$isValid) {
-            alertRedirect();
+            sessaoInvalida();
         }
 
         $id_Usuario = SessaoDAO::getIdUsuario($token);
 
     } catch (Exception $e) {
-        alertRedirect();
-        exit;
+        sessaoInvalida();
     }
 
 $id      = $_GET['id'] ?? null;

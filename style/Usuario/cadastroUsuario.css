@@ -26,6 +26,10 @@ body {
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
+#cadastro input{
+    margin-bottom: 20px;
+}
+
 h1 {
     text-align: center;
     font-size: 2rem;
@@ -61,6 +65,7 @@ h1 {
 .btns {
     display: flex;
     gap: 10px;
+    margin-top: 10px;
 }
 
 .buttons {

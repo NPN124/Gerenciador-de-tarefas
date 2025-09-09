@@ -9,15 +9,12 @@ require_once __DIR__ . "/../../api_core/resposta.php";
 require_once __DIR__ . "/../../models/SessaoDAO.php";
 
 $recurso = $_GET['recurso'] ?? null;
-$method  = $_SERVER['REQUEST_METHOD'];
+$method  = $_SERVER['REQUEST_METHOD'] ?? null;
 $dados   = json_decode(file_get_contents('php://input'), true) ?? null;
 
 if ($recurso === "usuario") {
 
     switch ($method) {
-        case "GET":
-            // Implementar se necessário
-            break;
         case "POST":
             UsuarioController::cadastrarUsuario($dados['nome'], $dados['email'], $dados['senha']);
             break;

@@ -31,7 +31,10 @@ function carregarVisualizar(tarefaID) {
             $('#prazo-visualizacao').text(tarefa.prazo);
             $('#status-visualizacao').text(tarefa.status);
             $('#descricao-visualizacao').text(tarefa.descricao);
-        } else {
+        } else if(resultado.status == 401) {
+                alert("Sua sessão expirou. Faça login novamente.");
+                window.location.href = "../index.php";
+        }else{
             $('#titulo-visualizacao').text("Tarefa não encontrada.");
         }
     }).fail(function () {
