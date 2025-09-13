@@ -1,6 +1,5 @@
 <?php
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 require_once __DIR__ . "/../../api_core/resposta.php";
 
@@ -9,6 +8,7 @@ $method  = $_SERVER['REQUEST_METHOD'] ?? null;
 $id      = $_GET['id'] ?? null;
 $search  = $_GET['search'] ?? null;
 $token   = $_COOKIE["tpwSSID"] ?? null;
+$acao    = $_GET['acao'] ?? null;
 
 // Rotas públicas (não precisam de token)
 $rotasPublicas = ['usuario'];
@@ -58,6 +58,10 @@ switch ($method) {
         break;
     case "PUT":
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $dadosJSON);
+        break;
+    case "PATCH":
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PATCH");
         curl_setopt($curl, CURLOPT_POSTFIELDS, $dadosJSON);
         break;
     case "DELETE":

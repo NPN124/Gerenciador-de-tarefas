@@ -11,6 +11,7 @@ require_once __DIR__ . "/../../models/SessaoDAO.php";
 $recurso = $_GET['recurso'] ?? null;
 $method  = $_SERVER['REQUEST_METHOD'] ?? null;
 $dados   = json_decode(file_get_contents('php://input'), true) ?? null;
+$acao    = $_GET['acao'] ?? null;
 
 if ($recurso === "usuario") {
 

@@ -1,7 +1,6 @@
 <?php 
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH");
 
 require_once __DIR__ ."/../Controller/Etiqueta.php";
 require_once __DIR__ ."/../Controller/Tarefa.php";
@@ -41,28 +40,40 @@ $id      = $_GET['id'] ?? null;
 $method  = $_SERVER['REQUEST_METHOD'] ?? null;
 $search = $_GET['search'] ?? null;
 $dados   = json_decode(file_get_contents('php://input'), true) ?? null;
+$acao    = $_GET['acao'] ?? null;
 
 if ($recurso === "tarefa") {
     switch ($method) {
         case "GET":
             if($search){
-                TarefaController::pesquisarTarefas($search);
-            }elseif($id){
+                TarefaController::pesquisarTarefas($search, $id_Usuario);
+                exit;
+            }
+            if($id){
                 TarefaController::buscarTarefaPorId($id);
-            }else{
+                exit;
+            }
+            if($id_Usuario){
                 TarefaController::getTarefas($id_Usuario);
             }
             break;
         case "POST":
                 TarefaController::adicionarTarefa($dados, $id_Usuario);
-
             break;
         case "PUT":
-            if ($dados['concluir']) {
-                TarefaController::concluirTarefa($dados['id']);
+            if($dados){
+                TarefaController::atualizarTarefa($dados, $id_Usuario);
+            }
+            break;
+        case "PATCH":
+            if($dados['em_andamento'] ?? null){ 
+                TarefaController::definirComoEmAndamento($id);
                 exit;
-            } 
-            TarefaController::atualizarTarefa($dados, $id_Usuario);
+            }
+            if($dados['concluir'] ?? null){ 
+                TarefaController::concluirTarefa($id);
+                exit;
+            }
             break;
         case "DELETE":
             TarefaController::removerTarefa($id);
@@ -84,21 +95,6 @@ if ($recurso === "etiqueta") {
         default:
             echo Resposta::json(405, "Método não permitido");
             break;
-    }
-
-    if($recurso === "usuario"){
-
-        switch($method){
-            case "GET":
-                // Implementar se necessário
-                break;
-            case "POST":
-                UsuarioController::cadastrarUsuario($dados['nome'], $dados['email'], $dados['senha']);
-                break;
-            default:
-                echo Resposta::json(405, "Método não permitido");
-                break;
-        }
     }
 }
 ?>

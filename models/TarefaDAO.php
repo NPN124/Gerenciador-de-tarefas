@@ -47,6 +47,18 @@ require_once __DIR__ . '/../Controller/Tarefa.php';
             }
         }
 
+        public function definirComoEmAndamento($tarefaID){
+            try {
+                $pdo = DBConnection::getInstance();
+                $sql = "UPDATE {$this->tabela} SET status = 'em_andamento' WHERE id = :tarefaID";
+                $statement = $pdo->prepare($sql);
+                $statement->bindValue(':tarefaID', $tarefaID);
+                return $statement->execute();
+            } catch (Exception $e) {
+                throw new Exception("Erro ao definir a tarefa como em andamento: " .$e->getMessage());
+            }
+        }
+
         public function listarTarefas($usuarioID) {
             try {
                 $pdo = DBConnection::getInstance();
@@ -72,12 +84,13 @@ require_once __DIR__ . '/../Controller/Tarefa.php';
             }
         }
 
-        public function pesquisarTarefas($valor){
+        public function pesquisarTarefas($valor, $usuarioID){
             try {
                 $pdo = DBConnection::getInstance();
-                $sql = "SELECT * FROM " . $this->tabela . " WHERE titulo LIKE :palavra";
+                $sql = "SELECT * FROM " . $this->tabela . " WHERE titulo LIKE LOWER(:palavra) AND usuario_id = :usuarioID";
                 $statement = $pdo->prepare($sql);
-                $statement->bindValue(':palavra', $valor . '%');
+                $statement->bindValue(':palavra', '%' . $valor . '%');
+                $statement->bindValue(':usuarioID', $usuarioID);
                 $statement->execute();
                 return $statement->fetchAll(PDO::FETCH_ASSOC);
             } catch (PDOException $e) {

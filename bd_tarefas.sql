@@ -178,3 +178,9 @@ CREATE TABLE sessoes (
     ultimo_acesso DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
+
+SELECT * FROM tarefas WHERE titulo LIKE '%Revisar%' AND usuario_id = 2;
+
+SELECT * from tarefas WHERE usuario_id = 2;
+
+SELECT * FROM tarefas WHERE titulo = "Revisar contrato de prestação de serviço" and usuario_id = 2;

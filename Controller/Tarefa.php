@@ -88,11 +88,11 @@ class TarefaController {
         }
     }
 
-    public static function pesquisarTarefas($pesquisa)
+    public static function pesquisarTarefas($pesquisa, $usuarioID)
     {
         try {
             $tarefaDAO = new TarefasDAO();
-            $tarefas   = $tarefaDAO->pesquisarTarefas($pesquisa);
+            $tarefas   = $tarefaDAO->pesquisarTarefas($pesquisa, $usuarioID);
 
             if ($tarefas && count($tarefas) > 0) {
                 echo Resposta::json(200, "sucesso", $tarefas);
@@ -165,6 +165,22 @@ class TarefaController {
         } catch (Throwable $e) {
             error_log(Logger::exibirErro($e, "Erro ao concluir tarefa"), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "Erro ao concluir a tarefa");
+        }
+    }
+
+    public static function definirComoEmAndamento($id)
+    {
+        try {
+            $tarefaDAO = new TarefasDAO();
+
+            if ($tarefaDAO->definirComoEmAndamento($id)) {
+                echo Resposta::json(200, "Tarefa definida como em andamento com sucesso");
+            } else {
+                echo Resposta::json(500, "Erro ao definir a tarefa como em andamento");
+            }
+        } catch (Throwable $e) {
+            error_log(Logger::exibirErro($e, "Erro ao definir tarefa como em andamento"), 3, __DIR__ . "/../Erro_log_per.log");
+            echo Resposta::json(500, "Erro ao definir a tarefa como em andamento");
         }
     }
 }

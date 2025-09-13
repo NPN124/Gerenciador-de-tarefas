@@ -12,19 +12,17 @@ $('.container-tarefas').on('click', '.editar', function(){
 
 });
 
-
 $('.container-tarefas').on('change', '#concluirTarefas', function() {
     const tarefaID = $(this).data("id");
     const elemento = $(this).closest('.tarefa').find('.descricao');
 
-    elemento.css('text-decoration', 'line-through');
-    $(this).prop('checked', true);
-
-    $(this).css({
-        'pointer-events': 'none',
-    });
-
-    concluirTarefa(tarefaID);
+    if ($(this).is(':checked')) {
+        elemento.css('text-decoration', 'line-through');
+        concluirTarefa(tarefaID);
+    } else {
+        elemento.css('text-decoration', 'none');
+        definirComoPendente(tarefaID);
+    }
 });
 
 
@@ -88,8 +86,8 @@ function adicionarTarefa() {
 
     const listaDeEtiquetas = etiquetas;
 
-    if (!titulo || !prazo) {
-        alert("Preencha todos os campos!");
+    if (!titulo || !prazo || !status) {
+        alert("Preencha pelo menos o título, prazo e status da tarefa!");
         $('#btn-adicionar').prop('disabled', false);
         return;
     }
@@ -245,8 +243,6 @@ function atualizarTarefa() {
         dataType: 'json'
     }).done(function (resultado) {
         $('#btn-atualizar').prop('disabled', false);
-        console.log(resultado);
-
         if (resultado.status == 200) {
             listarTarefas();
             alert("Tarefa atualizada com sucesso!");
@@ -280,27 +276,50 @@ function concluirTarefa(tarefaID) {
     const idTarefa = tarefaID;
 
     $.ajax({
-        url: '../api_core/cURL/cURL.php/?recurso=tarefa',
-        type: 'PUT',
-        data: JSON.stringify({id: idTarefa, concluir: true }),
+        url: `../api_core/cURL/cURL.php/?recurso=tarefa&id=${idTarefa}`,
+        type: 'PATCH',
+        data: JSON.stringify({concluir: true }),
         contentType: 'application/json',
         dataType: 'json'
+    }).done(function (resultado) {
+        if(resultado.status == 401) {
+            alert("Sua sessão expirou. Faça login novamente.");
+            window.location.href = "../index.php";
+            return;
+        }
+        if (resultado.status == 200) {
+        } else {
+            alert("Falha ao concluir tarefa");
+        }
     })
-        .done(function (resultado) {
-            if(resultado.status == 401) {
-                alert("Sua sessão expirou. Faça login novamente.");
-                window.location.href = "../index.php";
-                return;
-            }
-            if (resultado.status == 200) {
-            } else {
-                alert("Falha ao concluir tarefa");
-            }
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            console.error("Erro AJAX: ", textStatus, errorThrown, jqXHR);
-        });
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        console.error("Erro AJAX: ", textStatus, errorThrown, jqXHR);
+    });
+}
 
+function definirComoPendente(tarefaID) {
+
+    const idTarefa = tarefaID;
+
+    $.ajax({
+        url: `../api_core/cURL/cURL.php/?recurso=tarefa&id=${idTarefa}`,
+        type: 'PATCH',
+        data: JSON.stringify({em_andamento: true }),
+        dataType: 'json'
+    }).done(function (resultado) {
+        if(resultado.status == 401) {
+            alert("Sua sessão expirou. Faça login novamente.");
+            window.location.href = "../index.php";
+            return;
+        }
+        if (resultado.status == 200) {
+        } else {
+            alert("Falha ao definir tarefa como em andamento");
+        }
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        console.error("Erro AJAX: ", textStatus, errorThrown, jqXHR);
+    });
 }
 
 function removerTarefa(tarefaID) {

@@ -6,7 +6,7 @@ class DBConnection {
         $host = 'localhost';
         $db   = 'BD_tarefas';
         $user = 'root';
-        $pass = '123';
+        $pass = '';
 
         try {
             $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
@@ -14,10 +14,10 @@ class DBConnection {
             return $pdo;
         } catch (PDOException $e) {
             error_log(Logger::exibirErro($e, "Erro de conexão com o banco de dados"), 3, __DIR__ . "/Erro_log_per.log");
-            die("Erro de conexão com o banco de dados: " . $e->getMessage());
+            exit;
         }catch (Throwable $e) {
             error_log(Logger::exibirErro($e, "Erro inesperado ao conectar ao banco de dados"), 3, __DIR__ . "/Erro_log_per.log");
-            die("Erro inesperado ao conectar ao banco de dados: " . $e->getMessage());
+            exit;
         }
     }
 }

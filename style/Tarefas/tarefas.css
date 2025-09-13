@@ -152,17 +152,6 @@ main {
     width: 35%;
 }
 
-#acoes-tarefa {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 1px;
-}
-
-#acoes-tarefa button{
-    padding: 0;
-}
-
 #plus{
     font-size: 40px;
     color: white;
@@ -251,6 +240,50 @@ main {
     padding: 8px;
 }
 
+.tarefa .acoes {
+    display: flex;
+    gap: 8px;
+}
+
+.tarefa .acoes button {
+    width: 50px;
+    height: 30px;
+    border: none;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: white;
+    backdrop-filter: blur(6px);
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+}
+
+.tarefa .acoes button i {
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.64);
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* Hover geral */
+.tarefa .acoes button:hover {
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+.tarefa .acoes .remover:hover {
+    color: #e74c3c;
+}
+
+.tarefa .acoes .editar:hover {
+    color: #f1c40f;
+}
+
+.tarefa .acoes .visualizar:hover {
+    color: #3498db;
+}
+
 .tarefa .descricao {
     font-size: 1rem;
     color: white;
@@ -268,21 +301,6 @@ main {
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.tarefa .acoes i:hover {
-    transform: scale(1.15);
-}
-
-.tarefa .acoes .remover:hover {
-    color: #e74c3c;
-}
-
-.tarefa .acoes .editar:hover {
-    color: #f1c40f;
-}
-
-.tarefa .acoes .visualizar:hover {
-    color: #3498db;
-}
 
 .checkbox-tarefa input[type="checkbox"] {
     appearance: none;
@@ -310,23 +328,7 @@ main {
     background-size: cover;
 }
 
-.tarefa .acoes button {
-    background: transparent;
-    border: none;
-    margin-left: 6px;
-    cursor: pointer;
-    color: white;
-    font-size: 16px;
-    backdrop-filter: blur(8px) saturate(150%);
-    transition: all 0.25s ease;
-}
-
 .tarefa .acoes button:hover {
     transform: scale(1.1);
-    background: rgba(0, 123, 255, 0.3);
-    box-shadow: 0 0 10px rgba(0,123,255,0.5);
 }
 
-.tarefa .acoes i {
-    color: white;
-}
