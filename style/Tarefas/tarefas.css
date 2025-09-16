@@ -112,12 +112,25 @@ main {
     transition: all 0.4s ease;
 }
 
-.search-container input[type="text"]:focus {
-    outline: none;
-    box-shadow: none;
-    border-bottom: 2px solid #007bff;
-    color: white;
-    width: 80%;
+/* Botão de pesquisa */
+.search-container button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.search-container button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.search-container button:active {
+    transform: scale(0.95);
 }
 
 .adicionar-tarefa {

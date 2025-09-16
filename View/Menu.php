@@ -1,3 +1,161 @@
+<?php
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+
+$token = $_COOKIE['tpwSSID'];
+$id     = $_GET['id'] ?? null;
+$search = $_GET['pesquisa'] ?? null;
+
+function requisitarAPI($url, $token) {
+    $curl = curl_init();
+    curl_setopt_array($curl, [
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+        "X-Token: $token",
+    ],
+        CURLOPT_CUSTOMREQUEST => "GET"
+    ]);
+
+    $response = json_decode(curl_exec($curl), true);
+    if (curl_errno($curl)) {
+        $erro = curl_error($curl);
+        error_log("Erro cURL: $erro \n", 3, __DIR__ . "/../Erro_log_per.log");
+        echo "<script>alert('Erro de comunicação com o servidor');</script>";
+        curl_close($curl);
+        return [];
+    }
+
+    curl_close($curl);
+
+    if (!isset($response['status'])) return [];
+    
+    if ($response['status'] == 200) {
+        return $response;
+    } elseif ($response['status'] == 401) {
+        echo "<script>alert('{$response['mensagem']}');
+         window.location.href='../index.php';</script>";
+        exit;
+    } else {
+        echo "<script>alert('{$response['mensagem']}');
+         window.location.href='Menu.php?recurso=tarefa';</script>";
+        exit;
+    }
+}
+
+// Montar URLs
+$urlTarefas = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso=tarefa";
+if ($search){
+     $urlTarefas .= "&search=" . urlencode($search);
+}
+
+$urlEtiquetas = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso=etiqueta";
+
+// Requisições
+$listaDeTarefas = requisitarAPI($urlTarefas, $token);
+$listaDeEtiquetas = requisitarAPI($urlEtiquetas, $token);
+
+
+// Função para listar etiquetas de uma tarefa específica
+function listarEtiquetasNaTarefa($tarefaID, $listaDeEtiquetas)
+{
+    $html = '';
+    if (isset($listaDeEtiquetas['dados'])) {
+        foreach ($listaDeEtiquetas['dados'] as $etiqueta) {
+            if (isset($etiqueta['tarefa_id']) && $etiqueta['tarefa_id'] == $tarefaID) {
+                $html .= '
+                <div class="etiqueta" style="background-color: ' . htmlspecialchars($etiqueta['cor']) . '; color: white;">
+                    <span class="nome-etiqueta">' . htmlspecialchars($etiqueta['nome']) . '</span>
+                </div>';
+            }
+        }
+    }
+    return $html;
+}
+
+function listarTarefas($listaDeTarefas, $listaDeEtiquetas)
+{
+    $html = '';
+
+    if (!isset($listaDeTarefas['dados']) || empty($listaDeTarefas['dados'])) {
+        return '<div class="nenhuma-tarefa">Nenhuma tarefa encontrada</div>';
+    }
+
+    $pendentes = [];
+    $concluidas = [];
+
+    foreach ($listaDeTarefas['dados'] as $tarefa) {
+        if (!isset($tarefa['status'])) continue;
+        
+        if ($tarefa['status'] === "pendente" || $tarefa['status'] === "em_andamento") {
+            $pendentes[] = $tarefa;
+        } elseif ($tarefa['status'] === "concluida") {
+            $concluidas[] = $tarefa;
+        }
+    }
+
+    foreach ($pendentes as $i => $tarefa) {
+        $html .= renderizarTarefa($tarefa, $i, $listaDeEtiquetas, false);
+    }
+
+    foreach ($concluidas as $i => $tarefa) {
+        $html .= renderizarTarefa($tarefa, $i + count($pendentes), $listaDeEtiquetas, true);
+    }
+
+    return $html;
+}
+
+function renderizarTarefa($tarefa, $index, $listaDeEtiquetas, $concluida)
+{
+    if (!isset($tarefa['id']) || !isset($tarefa['titulo'])) {
+        return '';
+    }
+
+    $estiloDisplay = 'style="display:none;"';
+    $estiloDescricao = $concluida ? 'style="text-decoration: line-through;"' : '';
+    $checkboxChecked = $concluida ? 'checked' : '';
+    $checkboxDisabled = $concluida ? 'style="pointer-events: none; cursor: not-allowed;"' : '';
+
+    // Preparar o link de status
+    $statusLink = ($concluida)
+        ? 'definirComoEmAndamento.php?recurso=tarefa&id=' . $tarefa['id']
+        : 'definirComoConcluida.php?recurso=tarefa&id=' . $tarefa['id'];
+
+    return '
+    <div class="tarefa" id="tarefa_' . $tarefa['id'] . '" ' . $estiloDisplay . '>
+        <div class="container-apenas-tarefas">
+            <div class="checkbox-tarefa">
+                <form action="' . $statusLink . '" method="GET">
+                    <input type="hidden" name="recurso" value="tarefa">
+                    <input type="checkbox" 
+                        id="concluirTarefas_' . $tarefa['id'] . '" 
+                        name="tarefa" 
+                        value="' . $tarefa['id'] . '" ' . $checkboxChecked . ' ' . $checkboxDisabled . ' 
+                        onchange="this.form.submit()">
+                </form>
+            </div>
+
+            <label for="concluirTarefas_' . $tarefa['id'] . '" class="descricao" ' . $estiloDescricao . '>' . htmlspecialchars($tarefa['titulo']) . '</label>
+            
+            <div class="acoes">
+                <a href="removertarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="remover">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+                <a href="editarTarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="editar">
+                    <i class="fa-solid fa-pen"></i>
+                </a>
+                <a href="visualizarTarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="visualizar">
+                    <i class="fa-solid fa-eye"></i>
+                </a>
+            </div>
+        </div>
+        <div class="container-etiqueta">' . listarEtiquetasNaTarefa($tarefa['id'], $listaDeEtiquetas) . '</div>
+    </div>';
+}
+
+// Gerar o HTML das tarefas
+$htmlTarefas = listarTarefas($listaDeTarefas, $listaDeEtiquetas);
+?>
+
 <!DOCTYPE html>
 <html lang="pt">
 
@@ -6,7 +164,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu</title>
     <link rel="stylesheet" href="../style/Tarefas/tarefas.css">
-    <link rel="stylesheet" href="../style//Tarefas/mesagens.css">
+    <link rel="stylesheet" href="../style/Tarefas/mesagens.css">
     <link rel="stylesheet" href="../style/Tarefas/etiqueta.css">
     <link rel="stylesheet" href="../style/Tarefas/formulario-principal.css">
     <link rel="stylesheet" href="../style/Tarefas/visualizarTarefa.css">
@@ -26,12 +184,27 @@
         </aside>
 
         <main>
-            <form id="Pesquisa">
+            <form id="Pesquisa" action="Menu.php" method="GET">
                 <div class="search-container">
                     <span><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" id="pesquisa" name="pesquisa" placeholder="Pesquisar...">
+                    <input type="text" id="pesquisa" name="pesquisa" placeholder="Pesquisar..."
+                        value="<?php echo $search ?? '' ?>">
+                    <input type="hidden" name="recurso" value="tarefa">
+                    <button id="btn-pesquisar" type="submit">Pesquisar</button>
+
+                    <!-- BOTÃO PARA LIMPAR PESQUISA - APARECE APENAS QUANDO HÁ PESQUISA -->
+                    <?php 
+                    if ($search){
+                        echo
+                        '<a href="Menu.php?recurso=tarefa" class="limpar-pesquisa" style="margin-left: 10px; color: white;">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar
+                        </a>';
+                    };
+                    ?>
                 </div>
             </form>
+
+            <form action=""></form>
 
             <form id="formulario-adicionar-titulo-tarefa">
                 <div class="adicionar-tarefa-titulo">
@@ -43,116 +216,21 @@
             </form>
 
             <!-- Listagem de tarefas -->
-            <div class="container-tarefas"></div>
-
+            <div class="container-tarefas"><?= $htmlTarefas ?></div>
         </main>
-
-        <!-- Formulário para adicionar/editar tarefa -->
-        <div class="container-adicionar-tarefa">
-            <div class="adicionar-tarefa">
-                <form id="formulario-adicionar-tarefa">
-
-                    <div class="form-group">
-                        <label for="titulo"></label>
-                        <input type="text" name="titulo" id="titulo" placeholder="Título da Tarefa">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="prioridade"></label>
-                        <select name="prioridade" id="prioridade">
-                            <option value="" selected disabled>--Prioridade--</option>
-                            <option value="baixa">Baixa</option>
-                            <option value="media">Média</option>
-                            <option value="alta">Alta</option>
-                        </select>
-                    </div>
-
-                    <section id="prazo-etiquetas-section">
-                        <p>Selecione o prazo</p>
-                        <div id="etiquetas-prazo-container">
-                            <div class="campo-data">
-                                <label for="prazo"></label>
-                                <input type="date" name="prazo" id="prazo">
-                            </div>
-                            <div class="campo-botao">
-                                <button id="btn-formulario-adicionar-etiqueta" type="button">
-                                    Adicionar Etiqueta
-                                </button>
-                            </div>
-                        </div>
-                    </section>
-
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" name="status">
-                            <option value="" selected disabled>--Selecione o status--</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="em_andamento">Em andamento</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="descricao"></label>
-                        <textarea id="descricao" name="descricao" placeholder="Descrição"></textarea>
-                    </div>
-                    <div class="form-actions">
-                        <input type="button" value="Adicionar Tarefa" id="btn-adicionar">
-                        <input type="button" value="Atualizar Tarefa" id="btn-atualizar" data-id="" style="display:none;">
-                        <input type="button" value="Cancelar" id="btn-cancelar">
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Adicionar-Etiqueta -->
-        <div id="adicionar-etiqueta">
-            <div>
-                <label for="nomeDaEtiqueta">Digite o nome da etiqueta</label>
-                <input type="text" id="nomeDaEtiqueta" placeholder="Nome da Etiqueta">
-            </div>
-            <div>
-                <label for="corDaEtiqueta">Escolha a cor da etiqueta</label>
-                <input type="color" id="corDaEtiqueta" value="#000000">
-            </div>
-            <div id="botoes-etiqueta">
-                <button id="btn-confirmar-etiquetas">Confirmar</button>
-                <button id="btn-executarEditar-etiqueta">Actualizar</button>
-                <button id="btn-adicionar-etiqueta">Adicionar</button>
-                <button id="btn-cancelar-etiqueta">Cancelar</button>
-            </div>
-            <div id="lista-de-etiquetas"></div>
-        </div>
-
-        <!-- Visualizar Tarefa -->
-        <dialog id="modal-visualizar" class="modal-container">
-            <div class="visualizar-tarefa">
-                <h2 id="titulo-visualizacao">Título da tarefa</h2>
-                
-                <div class="tarefa-detalhes">
-                    <p><strong>Prioridade:</strong> <span id="prioridade-visualizacao"></span></p>
-                    <p><strong>Status:</strong> <span id="status-visualizacao"></span></p>
-                    <p><strong>Prazo:</strong> <span id="prazo-visualizacao"></span></p>
-                </div>
-                
-                <div class="descricao-container">
-                    <p><strong>Descrição:</strong></p>
-                    <p id="descricao-visualizacao"></p>
-                </div>
-
-                <div class="form-actions">
-                    <button id="btn-fechar-visualizacao" class="btn-fechar">Fechar</button>
-                </div>
-            </div>
-        </dialog>
 
         <script type="text/javascript" src="../Javascript/Jquery/jquery-3.7.1.js"></script>
         <script type="text/javascript" src="../Javascript/Validate/jquery.validate.min.js"></script>
         <script type="text/javascript" src="../Javascript/Validate/messages_pt_PT.js"></script>
-        <script type="text/javascript" src="../Javascript/Tarefas.js"></script>
-        <script type="text/javascript" src="../Javascript/Efeitos.js"></script>
-        <script type="text/javascript" src="../Javascript/Etiqueta.js"></script>
-        <script type="text/javascript" src="../Javascript/visualizar.js"></script>
+        <script>
+            $(document).ready(function() {
+                // Animação de fadeIn para as tarefas
+                $('.tarefa').each(function(index) {
+                    $(this).delay(index * 15).fadeIn(500);
+                });
+            });
+        </script>
+    </div>
 </body>
 
 </html>
-
