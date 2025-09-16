@@ -63,8 +63,8 @@ function listarEtiquetasNaTarefa($tarefaID, $listaDeEtiquetas)
         foreach ($listaDeEtiquetas['dados'] as $etiqueta) {
             if (isset($etiqueta['tarefa_id']) && $etiqueta['tarefa_id'] == $tarefaID) {
                 $html .= '
-                <div class="etiqueta" style="background-color: ' . htmlspecialchars($etiqueta['cor']) . '; color: white;">
-                    <span class="nome-etiqueta">' . htmlspecialchars($etiqueta['nome']) . '</span>
+                <div class="etiqueta" style="background-color: ' . $etiqueta['cor'] . '; color: white;">
+                    <span class="nome-etiqueta">' . $etiqueta['nome'] . '</span>
                 </div>';
             }
         }
