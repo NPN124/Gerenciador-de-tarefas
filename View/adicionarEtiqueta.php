@@ -19,7 +19,7 @@
             </div>
             <div id="botoes-etiqueta">
                 <button type="submit" id="btn-adicionar-etiqueta">Adicionar</button>
-                <button type="button" id="btn-sair-etiqueta" onclick="window.close()">Sair</button>
+                <a href="../View/Menu.php">Sair</a>
             </div>
         </form>
     </div>
