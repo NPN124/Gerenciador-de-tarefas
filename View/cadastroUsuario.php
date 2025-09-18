@@ -70,7 +70,7 @@
                 email: $("#email").val(),
                 senha: $("#senha").val()
             };
-
+//
             $.ajax({
                 url: "../api_core/cURL/cURL.php?recurso=usuario",
                 type: "POST",
