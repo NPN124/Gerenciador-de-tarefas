@@ -61,7 +61,7 @@ if ($recurso === "tarefa") {
             break;
         case "PUT":
             if($dados){
-                TarefaController::atualizarTarefa($dados, $id_Usuario);
+                TarefaController::atualizarTarefa($dados, $id_Usuario, $id);
             }
             break;
         case "PATCH":

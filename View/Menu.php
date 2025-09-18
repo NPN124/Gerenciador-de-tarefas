@@ -9,6 +9,7 @@ $search = $_GET['pesquisa'] ?? null;
 function requisitarAPI($url, $token)
 {
     $curl = curl_init();
+    curl_setopt($curl, CURLOPT_PROXY, '');
     curl_setopt_array($curl, [
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
@@ -109,8 +110,8 @@ function renderizarTarefa($tarefa, $listaDeEtiquetas, $concluida)
     $checkboxDisabled = $concluida ? 'style="pointer-events: none; cursor: not-allowed;"' : '';
 
     $statusLink = ($concluida)
-        ? 'definirComoEmAndamento.php?recurso=tarefa&id=' . $tarefa['id']
-        : 'definirComoConcluida.php?recurso=tarefa&id=' . $tarefa['id'];
+        ? 'processos/definirComoEmAndamento.php?recurso=tarefa&id=' . $tarefa['id']
+        : 'processos/definirComoConcluida.php?recurso=tarefa&id=' . $tarefa['id'];
 
     return '
         <div class="tarefa" id="tarefa_' . $tarefa['id'] . '" ' . $estiloDisplay . '>
@@ -129,10 +130,10 @@ function renderizarTarefa($tarefa, $listaDeEtiquetas, $concluida)
                 <label for="concluirTarefas_' . $tarefa['id'] . '" class="descricao" ' . $estiloDescricao . '>' . $tarefa['titulo'] . '</label>
                 
                 <div class="acoes">
-                    <a href="removertarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="remover">
+                    <a href="processos/removertarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="remover">
                         <i class="fa-solid fa-trash"></i>
                     </a>
-                    <a href="editarTarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="editar">
+                    <a href="atualizarTarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="editar">
                         <i class="fa-solid fa-pen"></i>
                     </a>
                     <a href="visualizarTarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="visualizar">

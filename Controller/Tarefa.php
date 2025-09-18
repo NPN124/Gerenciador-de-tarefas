@@ -39,7 +39,7 @@ class TarefaController {
             $tarefaDAO   = new TarefasDAO();
             $tarefa = new Tarefa(null, $usuarioID, $tituloTarefa, $prazo, $prioridade, $status, $descricao);
 
-            if (!$$tarefaDAO->adicionarTarefa($tarefa)) {
+            if (!$tarefaDAO->adicionarTarefa($tarefa)) {
                 echo Resposta::json(400, "Erro ao adicionar tarefa");
                 exit();
             }
@@ -83,9 +83,9 @@ class TarefaController {
         }
     }
 
-    public static function atualizarTarefa($dados, $usuarioID)
+    public static function atualizarTarefa($dados, $usuarioID, $idTarefa)
     {
-        $id         = $dados['id'] ?? null;
+        $id         = $idTarefa;
         $titulo     = trim($dados['titulo']);
         $descricao  = $dados['descricao'] ?? null;
         $prazo      = $dados['prazo'] ?? null;

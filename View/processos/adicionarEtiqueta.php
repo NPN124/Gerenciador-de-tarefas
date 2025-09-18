@@ -10,7 +10,7 @@ if (!isset($_POST['nome']) || !isset($_POST['cor'])) {
 }
 
 $curl = curl_init();
-
+curl_setopt($curl, CURLOPT_PROXY, '');
 curl_setopt_array($curl, [
     CURLOPT_URL => URL_BASE . "?recurso={$recurso}&id={$tarefaId}",
     CURLOPT_RETURNTRANSFER => true,

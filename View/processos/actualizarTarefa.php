@@ -2,6 +2,7 @@
 require_once __DIR__ . "/../../api_core/configracao.php";
 
 $token = $_COOKIE['tpwSSID'] ?? null;
+$tarefaId = $_GET['id'] ?? null;
 
 $titulo = $_POST['titulo'] ?? '';
 $prioridade = $_POST['prioridade'] ?? '';
@@ -12,9 +13,9 @@ $descricao = $_POST['descricao'] ?? '';
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_PROXY, '');
 curl_setopt_array($curl, [
-    CURLOPT_URL => URL_BASE . "?recurso=tarefa",
+    CURLOPT_URL => URL_BASE . "?recurso=tarefa&id={$tarefaId}",
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_CUSTOMREQUEST => "PUT",
     CURLOPT_POSTFIELDS => json_encode([
         "titulo" => $titulo,
         "prioridade" => $prioridade,
