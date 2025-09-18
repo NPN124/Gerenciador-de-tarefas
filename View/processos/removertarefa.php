@@ -21,7 +21,7 @@ $resposta = json_decode(curl_exec($curl), true);
 
 if(curl_errno($curl)){
     $erro = curl_error($curl);
-    error_log("Erro cURL: $erro \n", 3,  __DIR__ . "/../Erro_log_per.log");
+    error_log("Erro cURL: $erro \n", 3,  __DIR__ . "/../../Erro_log_per.log");
     echo "<script>alert('Erro de comunicação com o servidor')<script>";
     exit;
 }

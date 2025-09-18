@@ -110,8 +110,8 @@ function renderizarTarefa($tarefa, $listaDeEtiquetas, $concluida)
     $checkboxDisabled = $concluida ? 'style="pointer-events: none; cursor: not-allowed;"' : '';
 
     $statusLink = ($concluida)
-        ? 'definirComoEmAndamento.php?recurso=tarefa&id=' . $tarefa['id']
-        : 'definirComoConcluida.php?recurso=tarefa&id=' . $tarefa['id'];
+        ? 'processos/definirComoEmAndamento.php?recurso=tarefa&id=' . $tarefa['id']
+        : 'processos/definirComoConcluida.php?recurso=tarefa&id=' . $tarefa['id'];
 
     return '
         <div class="tarefa" id="tarefa_' . $tarefa['id'] . '" ' . $estiloDisplay . '>

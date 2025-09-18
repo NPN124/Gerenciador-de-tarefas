@@ -1,13 +1,11 @@
 <?php 
 require_once __DIR__ . "/../../api_core/configracao.php";
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH");
+
 $recurso = $_GET['recurso'] ?? null;
 $token = $_COOKIE['tpwSSID'] ?? null;
 $tarefaId = $_GET['tarefa'] ?? null;
 
-if (!$tarefaId) {
-    die("Erro: ID da tarefa não definido");
-}
 $curl = curl_init();
 
 curl_setopt($curl, CURLOPT_PROXY, '');
@@ -27,7 +25,7 @@ $resposta = json_decode(curl_exec($curl), true);
 
 if (curl_errno($curl)) {
     $erro = curl_error($curl);
-    error_log("Erro cURL: $erro \n", 3,  __DIR__ . "/../Erro_log_per.log");
+    error_log("Erro cURL: $erro \n", 3,  __DIR__ . "/../../Erro_log_per.log");
     echo "<script>alert('Erro de comunicação com o servidor')<script>";
     exit;
 }
