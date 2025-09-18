@@ -33,39 +33,17 @@ class TarefaController {
         $status       = $dados["status"] ?? null;
         $descricao    = $dados['descricao'] ?? null;
         $prazo        = $dados['prazo'] ?? null;
-        $listaDeEtiquetas = $dados["listaDeEtiquetas"] ?? [];
+
 
         try {
-            $etiquetaDAO = new EtiquetaDAO();
             $tarefaDAO   = new TarefasDAO();
             $tarefa = new Tarefa(null, $usuarioID, $tituloTarefa, $prazo, $prioridade, $status, $descricao);
 
-            $idTarefa = $tarefaDAO->adicionarTarefa($tarefa);
-            if (!$idTarefa) {
+            if (!$$tarefaDAO->adicionarTarefa($tarefa)) {
                 echo Resposta::json(400, "Erro ao adicionar tarefa");
                 exit();
             }
-
-            if (is_array($listaDeEtiquetas) && count($listaDeEtiquetas) > 0) {
-                foreach ($listaDeEtiquetas as $etiquetaDados) {
-                    $nomeEtiqueta = trim($etiquetaDados['nome']);
-                    $corEtiqueta  = trim($etiquetaDados['cor']);
-
-                    $idEtiqueta = $etiquetaDAO->buscarEtiquetaPorNomeCorUsuario($nomeEtiqueta, $corEtiqueta, $usuarioID);
-                    if (!$idEtiqueta) {
-                        $etiqueta = new Etiqueta(null, $nomeEtiqueta, $corEtiqueta, $usuarioID);
-                        $idEtiqueta = $etiquetaDAO->adicionarEtiqueta($etiqueta);
-
-                        if (!$idEtiqueta) {
-                            echo Resposta::json(400, "Erro ao adicionar etiqueta");
-                            exit();
-                        }
-                    }
-                    $etiquetaDAO->associarEtiquetaTarefa($idTarefa, $idEtiqueta);
-                }
-            }
-
-            echo Resposta::json(201, "Tarefa adicionada com sucesso", ["id" => $idTarefa]);
+            echo Resposta::json(201, "Tarefa adicionada com sucesso");
         } catch (Throwable $e) {
             error_log(Logger::exibirErro($e,"Erro ao adicionar tarefa"), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "Erro ao adicionar tarefa");
@@ -108,7 +86,7 @@ class TarefaController {
     public static function atualizarTarefa($dados, $usuarioID)
     {
         $id         = $dados['id'] ?? null;
-        $titulo = trim($dados['titulo']);
+        $titulo     = trim($dados['titulo']);
         $descricao  = $dados['descricao'] ?? null;
         $prazo      = $dados['prazo'] ?? null;
         $prioridade = $dados['prioridade'] ?? null;

@@ -18,8 +18,7 @@ $recurso = $_GET['recurso'] ?? null;
 
     $heders = getallheaders();
 
-    $token = $heders["X-Token"] ?? null;
-
+    $token = $heders['X-Token']; 
     try {
         if (!$token) {
             sessaoInvalida();
@@ -92,6 +91,9 @@ if ($recurso === "etiqueta") {
             }
             EtiquetasController::getEtiquetas($id_Usuario);
             break;
+        case "POST":
+                EtiquetasController::adicionarEtiqueta($dados["nome"] ?? null, $dados['cor'] ?? null, $id_Usuario, $id);
+                break;
         default:
             echo Resposta::json(405, "Método não permitido");
             break;

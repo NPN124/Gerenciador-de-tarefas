@@ -1,18 +1,20 @@
 <?php
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+require_once __DIR__ ."/../api_core/configracao.php";
 
-$token = $_COOKIE['tpwSSID'];
+$token = $_COOKIE['tpwSSID'] ?? null;
 $id     = $_GET['id'] ?? null;
 $search = $_GET['pesquisa'] ?? null;
 
-function requisitarAPI($url, $token) {
+function requisitarAPI($url, $token)
+{
     $curl = curl_init();
     curl_setopt_array($curl, [
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPHEADER => [
-        "X-Token: $token",
-    ],
+            "X-Token: $token",
+        ],
         CURLOPT_CUSTOMREQUEST => "GET"
     ]);
 
@@ -28,7 +30,7 @@ function requisitarAPI($url, $token) {
     curl_close($curl);
 
     if (!isset($response['status'])) return [];
-    
+
     if ($response['status'] == 200) {
         return $response;
     } elseif ($response['status'] == 401) {
@@ -42,20 +44,17 @@ function requisitarAPI($url, $token) {
     }
 }
 
-// Montar URLs
-$urlTarefas = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso=tarefa";
-if ($search){
-     $urlTarefas .= "&search=" . urlencode($search);
+
+$urlTarefas = URL_BASE ."?recurso=tarefa";
+if ($search) {
+    $urlTarefas .= "&search=" . urlencode($search);
 }
 
-$urlEtiquetas = "http://localhost/DPWDPLS/EC/Gerenciador-de-tarefas/public/index.php?recurso=etiqueta";
+$urlEtiquetas = URL_BASE ."?recurso=etiqueta";
 
-// Requisições
 $listaDeTarefas = requisitarAPI($urlTarefas, $token);
 $listaDeEtiquetas = requisitarAPI($urlEtiquetas, $token);
 
-
-// Função para listar etiquetas de uma tarefa específica
 function listarEtiquetasNaTarefa($tarefaID, $listaDeEtiquetas)
 {
     $html = '';
@@ -76,83 +75,78 @@ function listarTarefas($listaDeTarefas, $listaDeEtiquetas)
 {
     $html = '';
 
-    if (!isset($listaDeTarefas['dados']) || empty($listaDeTarefas['dados'])) {
-        return '<div class="nenhuma-tarefa">Nenhuma tarefa encontrada</div>';
-    }
-
     $pendentes = [];
     $concluidas = [];
 
     foreach ($listaDeTarefas['dados'] as $tarefa) {
-        if (!isset($tarefa['status'])) continue;
-        
-        if ($tarefa['status'] === "pendente" || $tarefa['status'] === "em_andamento") {
-            $pendentes[] = $tarefa;
-        } elseif ($tarefa['status'] === "concluida") {
-            $concluidas[] = $tarefa;
+        if (isset($tarefa['status'])) {
+            if ($tarefa['status'] === "pendente" || $tarefa['status'] === "em_andamento") {
+                $pendentes[] = $tarefa;
+            } elseif ($tarefa['status'] === "concluida") {
+                $concluidas[] = $tarefa;
+            }
         }
     }
 
-    foreach ($pendentes as $i => $tarefa) {
-        $html .= renderizarTarefa($tarefa, $i, $listaDeEtiquetas, false);
+    foreach ($pendentes as $tarefa) {
+        $html .= renderizarTarefa($tarefa, $listaDeEtiquetas, false);
     }
 
-    foreach ($concluidas as $i => $tarefa) {
-        $html .= renderizarTarefa($tarefa, $i + count($pendentes), $listaDeEtiquetas, true);
+    foreach ($concluidas as $tarefa) {
+        $html .= renderizarTarefa($tarefa, $listaDeEtiquetas, true);
     }
 
     return $html;
 }
 
-function renderizarTarefa($tarefa, $index, $listaDeEtiquetas, $concluida)
+
+function renderizarTarefa($tarefa, $listaDeEtiquetas, $concluida)
 {
-    if (!isset($tarefa['id']) || !isset($tarefa['titulo'])) {
-        return '';
-    }
 
     $estiloDisplay = 'style="display:none;"';
     $estiloDescricao = $concluida ? 'style="text-decoration: line-through;"' : '';
     $checkboxChecked = $concluida ? 'checked' : '';
     $checkboxDisabled = $concluida ? 'style="pointer-events: none; cursor: not-allowed;"' : '';
 
-    // Preparar o link de status
     $statusLink = ($concluida)
         ? 'definirComoEmAndamento.php?recurso=tarefa&id=' . $tarefa['id']
         : 'definirComoConcluida.php?recurso=tarefa&id=' . $tarefa['id'];
 
     return '
-    <div class="tarefa" id="tarefa_' . $tarefa['id'] . '" ' . $estiloDisplay . '>
-        <div class="container-apenas-tarefas">
-            <div class="checkbox-tarefa">
-                <form action="' . $statusLink . '" method="GET">
-                    <input type="hidden" name="recurso" value="tarefa">
-                    <input type="checkbox" 
-                        id="concluirTarefas_' . $tarefa['id'] . '" 
-                        name="tarefa" 
-                        value="' . $tarefa['id'] . '" ' . $checkboxChecked . ' ' . $checkboxDisabled . ' 
-                        onchange="this.form.submit()">
-                </form>
-            </div>
+        <div class="tarefa" id="tarefa_' . $tarefa['id'] . '" ' . $estiloDisplay . '>
+            <div class="container-apenas-tarefas">
+                <div class="checkbox-tarefa">
+                    <form action="' . $statusLink . '" method="GET">
+                        <input type="hidden" name="recurso" value="tarefa">
+                        <input type="checkbox" 
+                            id="concluirTarefas_' . $tarefa['id'] . '" 
+                            name="tarefa" 
+                            value="' . $tarefa['id'] . '" ' . $checkboxChecked . ' ' . $checkboxDisabled . ' 
+                            onchange="this.form.submit()">
+                    </form>
+                </div>
 
-            <label for="concluirTarefas_' . $tarefa['id'] . '" class="descricao" ' . $estiloDescricao . '>' . htmlspecialchars($tarefa['titulo']) . '</label>
-            
-            <div class="acoes">
-                <a href="removertarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="remover">
-                    <i class="fa-solid fa-trash"></i>
-                </a>
-                <a href="editarTarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="editar">
-                    <i class="fa-solid fa-pen"></i>
-                </a>
-                <a href="visualizarTarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="visualizar">
-                    <i class="fa-solid fa-eye"></i>
-                </a>
+                <label for="concluirTarefas_' . $tarefa['id'] . '" class="descricao" ' . $estiloDescricao . '>' . $tarefa['titulo'] . '</label>
+                
+                <div class="acoes">
+                    <a href="removertarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="remover">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                    <a href="editarTarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="editar">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <a href="visualizarTarefa.php?id=' . $tarefa['id'] . '&recurso=tarefa" class="visualizar">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                    <a href="adicionarEtiqueta.php?id=' . $tarefa['id'] . '" class="detalhes">
+                        <i class="fa-solid fa-ticket-simple"></i>
+                    </a>
+                </div>
             </div>
-        </div>
-        <div class="container-etiqueta">' . listarEtiquetasNaTarefa($tarefa['id'], $listaDeEtiquetas) . '</div>
-    </div>';
+            <div class="container-etiqueta">' . listarEtiquetasNaTarefa($tarefa['id'], $listaDeEtiquetas) . '</div>
+        </div>';
 }
 
-// Gerar o HTML das tarefas
 $htmlTarefas = listarTarefas($listaDeTarefas, $listaDeEtiquetas);
 ?>
 
@@ -192,9 +186,8 @@ $htmlTarefas = listarTarefas($listaDeTarefas, $listaDeEtiquetas);
                     <input type="hidden" name="recurso" value="tarefa">
                     <button id="btn-pesquisar" type="submit">Pesquisar</button>
 
-                    <!-- BOTÃO PARA LIMPAR PESQUISA - APARECE APENAS QUANDO HÁ PESQUISA -->
-                    <?php 
-                    if ($search){
+                    <?php
+                    if ($search) {
                         echo
                         '<a href="Menu.php?recurso=tarefa" class="limpar-pesquisa" style="margin-left: 10px; color: white;">
                         <i class="fa-solid fa-arrow-left"></i> Voltar
@@ -208,10 +201,9 @@ $htmlTarefas = listarTarefas($listaDeTarefas, $listaDeEtiquetas);
 
             <form id="formulario-adicionar-titulo-tarefa">
                 <div class="adicionar-tarefa-titulo">
-                    <input type="text" name="tituloDaTarefa" id="tituloDaTarefa" placeholder="Adicionar nova tarefa...">
-                    <button type="submit" id="btnTituloDaTarefa" style="background:none; border:none; cursor:pointer; font-size:24px; color:#007bff;">
-                        <span id="plus"><i class="fa-solid fa-circle-plus"></i></span>
-                    </button>
+                    <a href="adicionarTarefa.php" id="btnTituloDaTarefa" style="background:none; border:none; cursor:pointer; font-size:24px; color:#007bff;">
+                            <span id="plus"><i class="fa-solid fa-circle-plus"></i></span>
+                    </a>
                 </div>
             </form>
 

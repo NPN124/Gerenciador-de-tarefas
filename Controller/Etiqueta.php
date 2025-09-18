@@ -1,10 +1,9 @@
 <?php 
-header('Content-Type: application/json; charset=utf-8');
-
 require_once __DIR__ . "/../conexao.php";
 require_once __DIR__ . "/../models/EtiquetaDAO.php";
 require_once __DIR__ ."/../models/Objectos/Etiqueta.php";
 require_once __DIR__ ."/../api_core/resposta.php";
+require_once __DIR__ ."/../models/Logger.php";
 
 Class EtiquetasController{
 
@@ -14,7 +13,7 @@ Class EtiquetasController{
             $etiquetas = $etiquetaDAO->listaDeEstiquetas($usuarioID);
             echo Resposta::json(200, 'sucesso', $etiquetas);
         } catch (Throwable $e) {
-            error_log("Erro ao listar tarefas: ". $e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
+            error_log(Logger::exibirErro($e, "Erro ao listar tarefas"), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "Erro ao carregar etiquetas");
         }
     }
@@ -30,34 +29,37 @@ Class EtiquetasController{
                 echo Resposta::json(405, "Erro ao buscar etiquetas");
             }
         } catch (Throwable $e) {
-            error_log("Erro ao buscar etiquetas de uma tarefa: " . $e->getMessage(), 3, __DIR__ . "/../Erro_log_per.log");
+            error_log(Logger::exibirErro($e, "Erro buscar etiqueta por ID"), 3, __DIR__ . "/../Erro_log_per.log");
             echo Resposta::json(500, "Erro no servidor ao listar etiquetas");
+        }
+    }
+
+    public static function adicionarEtiqueta($titulo, $cor, $usuarioID, $idTarefa) {
+        try {
+            $etiquetaDAO = new EtiquetaDAO();
+
+            $idEtiqueta = $etiquetaDAO->buscarEtiquetaPorNomeCorUsuario($titulo, $cor, $usuarioID);
+            if (!$idEtiqueta) {
+                $etiqueta = new Etiqueta(null, $titulo, $cor, $usuarioID);
+                $idEtiqueta = $etiquetaDAO->adicionarEtiqueta($etiqueta);
+
+                if (!$idEtiqueta) {
+                    echo Resposta::json(400, "Erro ao adicionar etiqueta");
+                    exit();
+                }
+            }
+            $etiquetaDAO->associarEtiquetaTarefa($idTarefa, $idEtiqueta);
+
+            echo Resposta::json(200, "Etiqueta adicionada com sucesso");
+            
+        } catch (Exception $e) {
+            error_log(Logger::exibirErro($e, "Erro adicionar tarefa"), 3, __DIR__ . "/../Erro_log_per.log");
+            echo Resposta::json(500, "Erro interno ao adicionar etiquetas");
         }
     }
 }
 
 /*
-$etiquetaDAO = new EtiquetaDAO();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['acao'] === 'ADICIONAR') {
-    $listaDeEtiquetas = json_decode($_POST["listaDeEtiquetas"], true);
-
-    try {
-        foreach ($listaDeEtiquetas as $etiquetaDados) {
-            $titulo = $etiquetaDados['nome'];
-            $cor = $etiquetaDados['cor'];
-            $tarefa = new Etiqueta(null ,$titulo, $cor, $usuarioID);
-
-            if ($etiquetaDAO->adicionarEtiqueta($tarefa)) {
-                echo json_encode(["resposta" => "sucesso"]);
-            }
-        }
-
-    } catch (Exception $e) {
-        echo json_encode(["resposta" => "erro", "mensagem" => $e->getMessage()]);
-    }
-}
-
 if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['acao'] === 'ACTUALIZAR'){
     $listaDeEtiquetas = json_decode($_POST['listaDeEtiquetas'], true);
 
@@ -78,5 +80,5 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['acao'] === 'ACTUALIZAR'){
     }
     echo json_encode(["resposta" => "sucesso"]);
 }
-*/
 ?>
+*/

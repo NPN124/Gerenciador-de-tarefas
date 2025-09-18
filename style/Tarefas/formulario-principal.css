@@ -1,10 +1,24 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #f0f0f0;
+}
+
 .container-adicionar-tarefa {
-    min-width: 450px;
-    display: none;
-    position: fixed;
-    top: 50%; 
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 550px;
+    animation: fadeIn 0.5s ease-out;
 }
 
 .adicionar-tarefa {
@@ -12,21 +26,56 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.8rem;
     width: 100%;
-    max-width: 550px;
-    padding: 2.5rem 2rem;
-    border-radius: 14px;
-    background: linear-gradient(120deg, #1e1e1e 80%, #232526 100%);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    padding: 2.8rem 2.4rem;
+    border-radius: 20px;
+    background: rgba(30, 30, 30, 0.85);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     color: #f0f0f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.adicionar-tarefa::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+    transform: rotate(30deg);
+    pointer-events: none;
+}
+
+.adicionar-tarefa h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .adicionar-tarefa form {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 1.2rem; 
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: #d0d0d0;
+    margin-left: 5px;
 }
 
 .adicionar-tarefa input[type="text"],
@@ -34,19 +83,19 @@
 .adicionar-tarefa select,
 .adicionar-tarefa textarea {
     width: 100%;
-    padding: 0.85rem 1rem; 
-    border: 1px solid #555; 
-    background-color: #3a3a3a; 
+    padding: 1rem 1.2rem;
+    border: 1px solid #444;
+    background-color: rgba(58, 58, 58, 0.7);
     color: #f0f0f0;
     font-size: 1rem;
-    border-radius: 8px; 
-    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s;
+    border-radius: 12px;
+    transition: all 0.3s ease;
     outline: none;
 }
 
 .adicionar-tarefa textarea {
-    min-height: 100px;
-    height: 100%; 
+    min-height: 120px;
+    resize: vertical;
 }
 
 .adicionar-tarefa input::placeholder,
@@ -58,86 +107,113 @@
 .adicionar-tarefa input:focus,
 .adicionar-tarefa select:focus,
 .adicionar-tarefa textarea:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-    background-color: #2a2a2a;
+    border-color: #4dabf7;
+    box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.3);
+    background-color: rgba(42, 42, 42, 0.9);
+    transform: translateY(-2px);
 }
 
+#prazo-etiquetas-section {
+    background: rgba(40, 40, 40, 0.6);
+    padding: 1.2rem;
+    border-radius: 12px;
+    margin-top: 0.5rem;
+}
+
+#prazo-etiquetas-section p {
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: #e9ecef;
+}
 
 #etiquetas-prazo-container {
     display: flex;
-    flex-direction: column; 
-    gap: 1rem;
-    align-items: stretch;
-    margin-top: 1rem;
-    color: #f0f0f0;
     flex-direction: row;
+    gap: 1rem;
     align-items: flex-end;
 }
 
-#etiquetas-prazo-container .campo-data, #etiquetas-prazo-container .campo-botao {
+#etiquetas-prazo-container .campo-data {
+    flex: 2;
+}
+
+#etiquetas-prazo-container .campo-botao {
     flex: 1;
 }
 
 #btn-formulario-adicionar-etiqueta {
-    padding: 0.85rem 1.5rem;
-    border-radius: 8px;
+    padding: 1rem 0.8rem;
+    border-radius: 10px;
     border: none;
     outline: none;
-    font-size: 0.95rem;
-    background-color: #555;
-    color: #f0f0f0;
+    font-size: 0.9rem;
+    background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+    color: #fff;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    width: 100%;
+    font-weight: 600;
 }
 
 #btn-formulario-adicionar-etiqueta:hover {
-    background-color: #666;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
 }
 
 #btn-formulario-adicionar-etiqueta:active {
-    transform: scale(0.98);
+    transform: translateY(0);
 }
 
 .adicionar-tarefa .form-actions {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
 }
 
 #btn-adicionar,
 #btn-atualizar,
 #btn-cancelar {
     border: none;
-    padding: 0.9rem 1.8rem;
+    padding: 1.1rem 2rem;
     font-weight: bold;
-    border-radius: 30px;
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 0.95rem;
-    transition: background-color 0.2s, transform 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 #btn-adicionar,
 #btn-atualizar {
-    background-color: #007bff;
+    background: linear-gradient(to right, #00b09b 0%, #96c93d 100%);
     color: white;
 }
 
 #btn-adicionar:hover,
 #btn-atualizar:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
 #btn-cancelar {
-    background-color: #444;
+    background: rgba(108, 117, 125, 0.7);
     color: #fff;
 }
 
 #btn-cancelar:hover {
-    background-color: #333;
-    transform: translateY(-2px);
+    background: rgba(108, 117, 125, 1);
+    transform: translateY(-3px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
