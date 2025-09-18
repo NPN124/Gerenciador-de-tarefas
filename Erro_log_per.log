@@ -1,0 +1,60 @@
+Erro cURL: Protocol "hhttp" not supported or disabled in libcurl 
+Erro cURL: Protocol "hhttp" not supported or disabled in libcurl 
+Erro cURL: Protocol "hhttp" not supported or disabled in libcurl 
+Erro cURL: Protocol "hhttp" not supported or disabled in libcurl 
+
+==================== ERRO ====================
+Erro de conexão com o banco de dados:
+Mensagem: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)
+Código: 1045
+Arquivo: C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\conexao.php
+Linha: 12
+Stack trace:
+#0 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\conexao.php(12): PDO->__construct('mysql:host=loca...', 'root', Object(SensitiveParameterValue))
+#1 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\models\SessaoDAO.php(44): DBConnection::getInstance()
+#2 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\public\index.php(27): SessaoDAO::verificarSessao('token_68cc2dfb6...')
+#3 {main}
+===============================================
+
+
+==================== ERRO ====================
+Erro de conexão com o banco de dados:
+Mensagem: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)
+Código: 1045
+Arquivo: C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\conexao.php
+Linha: 12
+Stack trace:
+#0 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\conexao.php(12): PDO->__construct('mysql:host=loca...', 'root', Object(SensitiveParameterValue))
+#1 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\models\SessaoDAO.php(44): DBConnection::getInstance()
+#2 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\public\index.php(27): SessaoDAO::verificarSessao('token_68cc2dfb6...')
+#3 {main}
+===============================================
+
+
+==================== ERRO ====================
+Erro de conexão com o banco de dados:
+Mensagem: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)
+Código: 1045
+Arquivo: C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\conexao.php
+Linha: 12
+Stack trace:
+#0 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\conexao.php(12): PDO->__construct('mysql:host=loca...', 'root', Object(SensitiveParameterValue))
+#1 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\models\SessaoDAO.php(44): DBConnection::getInstance()
+#2 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\public\index.php(27): SessaoDAO::verificarSessao('token_68cc2dfb6...')
+#3 {main}
+===============================================
+
+
+==================== ERRO ====================
+Erro de conexão com o banco de dados:
+Mensagem: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)
+Código: 1045
+Arquivo: C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\conexao.php
+Linha: 12
+Stack trace:
+#0 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\conexao.php(12): PDO->__construct('mysql:host=loca...', 'root', Object(SensitiveParameterValue))
+#1 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\models\SessaoDAO.php(44): DBConnection::getInstance()
+#2 C:\xampp\htdocs\TPW3_PHP\Gerenciador-de-tarefas\public\index.php(27): SessaoDAO::verificarSessao('token_68cc2dfb6...')
+#3 {main}
+===============================================
+
